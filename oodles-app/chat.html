@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>oodles&doodles – Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="app-body">
+  <header class="top-bar">
+    <div class="logo">
+      <img src="logo-oodles-doodles.jpg" alt="Oodles & Doodles" class="logo-image">
+    </div>
+    <nav class="top-nav">
+      <a href="browse.html" class="nav-link">Browse</a>
+      <a href="matches.html" class="nav-link">Matches</a>
+      <a href="profile.html" class="nav-link">Profile</a>
+      <a href="settings.html" class="nav-link">Settings</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="chat-layout">
+      <aside class="chat-sidebar">
+        <h2>Chats</h2>
+        <ul class="chat-list">
+          <li class="chat-list-item active">
+            <img src="https://via.placeholder.com/40" alt="Profile" class="avatar">
+            <div>
+              <div class="name">Liam, 32</div>
+              <div class="snippet">“You free this weekend?”</div>
+            </div>
+          </li>
+          <li class="chat-list-item">
+            <img src="https://via.placeholder.com/40" alt="Profile" class="avatar">
+            <div>
+              <div class="name">Connor, 27</div>
+              <div class="snippet">“Send me your best selfie 😏”</div>
+            </div>
+          </li>
+          <li class="chat-list-item">
+            <img src="https://via.placeholder.com/40" alt="Profile" class="avatar">
+            <div>
+              <div class="name">Alex, 30</div>
+              <div class="snippet">“Drag race finale watch party?”</div>
+            </div>
+          </li>
+        </ul>
+      </aside>
+
+      <div class="chat-main">
+        <header class="chat-header">
+          <div>
+            <h1>Liam, 32</h1>
+            <p>Online · New Farm</p>
+          </div>
+          <div class="chat-actions">
+            <button class="btn-ghost">Block</button>
+            <button class="btn-ghost">Report</button>
+          </div>
+        </header>
+
+        <div class="chat-messages">
+          <div class="message received">
+            <p>Hey, love your pics 😏</p>
+            <span class="time">10:21 pm</span>
+          </div>
+          <div class="message sent">
+            <p>Haha thank you, you’re cute too.</p>
+            <span class="time">10:23 pm</span>
+          </div>
+          <div class="message received">
+            <p>What are you up to this weekend?</p>
+            <span class="time">10:24 pm</span>
+          </div>
+        </div>
+
+        <form class="chat-input">
+          <input type="text" placeholder="Say something flirty…" />
+          <button type="submit" class="btn-primary">Send</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
