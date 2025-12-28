@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>oodles&doodles – Settings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="app-body">
+  <header class="top-bar">
+    <div class="logo">
+      <img src="logo-oodles-doodles.jpg" alt="Oodles & Doodles" class="logo-image">
+    </div>
+    <nav class="top-nav">
+      <a href="browse.html" class="nav-link">Browse</a>
+      <a href="matches.html" class="nav-link">Matches</a>
+      <a href="profile.html" class="nav-link">Profile</a>
+      <a href="settings.html" class="nav-link active">Settings</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="settings">
+      <header class="section-header">
+        <h1>Settings</h1>
+        <p>Control your account, privacy and notifications.</p>
+      </header>
+
+      <div class="settings-grid">
+        <div class="settings-block">
+          <h2>Account</h2>
+          <p>Email: you@example.com</p>
+          <button class="btn-ghost">Change password</button>
+        </div>
+
+        <div class="settings-block">
+          <h2>Privacy</h2>
+          <label class="checkbox-row">
+            <input type="checkbox" checked />
+            Only show my profile to people I’ve liked
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" />
+            Hide my distance
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" />
+            Hide my online status
+          </label>
+        </div>
+
+        <div class="settings-block">
+          <h2>Notifications</h2>
+          <label class="checkbox-row">
+            <input type="checkbox" checked />
+            New messages
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" checked />
+            New matches
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" />
+            Promotions & updates
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Subscription plans -->
+    <section class="subscription">
+      <h2>Upgrade to oodles&doodles+</h2>
+      <p>New members get 7 days free on weekly and monthly, or go all‑in with lifetime access.</p>
+
+      <div class="plans">
+        <article class="plan-card">
+          <h3>Lifetime</h3>
+          <p class="price">$120 AUD once, lifetime access</p>
+          <a
+            href="https://buy.stripe.com/test_dRm6oJbat8u2caX90tgYU03"
+            class="btn-primary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Get lifetime
+          </a>
+        </article>
+
+        <article class="plan-card">
+          <h3>Weekly</h3>
+          <p class="price">$7.99 AUD / week after 7‑day free trial</p>
+          <a
+            href="https://buy.stripe.com/test_9B628tfqJ8u20sf90tgYU01"
+            class="btn-primary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Start weekly
+          </a>
+        </article>
+
+        <article class="plan-card">
+          <h3>Monthly</h3>
+          <p class="price">$22.99 AUD / month after 7‑day free trial</p>
+          <a
+            href="https://buy.stripe.com/test_5kQeVfguN25E0sf6SlgYU02"
+            class="btn-primary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Start monthly
+          </a>
+        </article>
+      </div>
+
+      <p class="subscription-note">
+        Payments and free trials are handled securely by Stripe. Cancel anytime before your trial ends to avoid being charged for weekly or monthly plans.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

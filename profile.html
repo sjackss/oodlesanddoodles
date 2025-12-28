@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>oodles&doodles – Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="app-body">
+  <header class="top-bar">
+    <div class="logo">oodles&doodles</div>
+    <nav class="top-nav">
+      <a href="browse.html" class="nav-link">Browse</a>
+      <a href="matches.html" class="nav-link">Matches</a>
+      <a href="profile.html" class="nav-link active">Profile</a>
+      <a href="settings.html" class="nav-link">Settings</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="profile-edit">
+      <header class="section-header">
+        <h1>Your profile</h1>
+        <p>Show off your vibe so the right guys find you.</p>
+      </header>
+
+      <form class="profile-form">
+        <div class="form-row">
+          <label>
+            Display name
+            <input type="text" placeholder="Jai" />
+          </label>
+          <label>
+            Age
+            <input type="number" min="18" max="99" />
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label>
+            Pronouns
+            <select>
+              <option>he / him</option>
+              <option>they / them</option>
+              <option>he / they</option>
+              <option>she / they</option>
+              <option>custom…</option>
+            </select>
+          </label>
+          <label>
+            Identity
+            <select>
+              <option>Gay man</option>
+              <option>Bi man</option>
+              <option>Trans masc</option>
+              <option>Non‑binary</option>
+              <option>Queer</option>
+            </select>
+          </label>
+        </div>
+
+        <label>
+          About you
+          <textarea placeholder="A few lines about who you are and what you’re into…"></textarea>
+        </label>
+
+        <label>
+          What you’re looking for
+          <textarea placeholder="Dates, fun, long‑term, friends… be honest."></textarea>
+        </label>
+
+        <div class="form-row">
+          <label>
+            Location
+            <input type="text" placeholder="Brisbane, QLD" />
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" checked />
+            Show my approximate location
+          </label>
+        </div>
+
+        <button type="submit" class="btn-primary">Save profile</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
