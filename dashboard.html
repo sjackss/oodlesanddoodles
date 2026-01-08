@@ -32,6 +32,16 @@
       font-size: 14px;
       cursor: pointer;
     }
+    .btn-outline {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.8);
+      background: transparent;
+      color: #e5e7eb;
+      font-size: 13px;
+      cursor: pointer;
+      margin-right: 6px;
+    }
     main { max-width: 1040px; margin: 0 auto; padding: 20px; }
 
     #subscription-status {
@@ -48,7 +58,8 @@
       text-decoration: underline;
     }
 
-    h2 { font-size: 24px; margin-bottom: 14px; }
+    h2 { font-size: 24px; margin-bottom: 10px; }
+    .muted { font-size: 13px; color: #94a3b8; margin-bottom: 8px; }
 
     .profile-grid {
       display: grid;
@@ -79,7 +90,15 @@
       font-size: 12px;
       color: #22c55e;
     }
-    .muted { color: #94a3b8; font-size: 13px; }
+    .tag-self {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(148,163,184,0.3);
+      color: #e5e7eb;
+    }
   </style>
 </head>
 <body>
@@ -87,6 +106,7 @@
     <div class="brand">oodles<span>&</span>doodles</div>
     <div>
       <span id="user-email" style="font-size:13px;margin-right:8px;color:#cbd5e1;"></span>
+      <button class="btn-outline" onclick="goProfile()">Profile</button>
       <button class="btn" onclick="logout()">Logout</button>
     </div>
   </header>
@@ -101,14 +121,14 @@
       </a>
     </div>
 
-    <h2>Local guys</h2>
-    <p class="muted">Browse members. Messaging and full features depend on your trial or membership status.</p>
+    <h2>All members</h2>
+    <p class="muted">You can see yourself and everyone else. Edit your profile to stand out.</p>
 
     <div class="profile-grid" id="profiles-list">
       <div class="profile-card">
         <div class="profile-avatar">👋</div>
         <h3>Welcome</h3>
-        <p class="muted">You are the first here. Create more test accounts to see other profiles.</p>
+        <p class="muted">Once there are more members, they will show up here.</p>
       </div>
     </div>
   </main>
@@ -125,9 +145,7 @@
       collection,
       getDocs,
       doc,
-      getDoc,
-      query,
-      where
+      getDoc
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -169,7 +187,6 @@
         } else {
           trialSpan.textContent = '0';
         }
-
         if (data.isPaid) {
           paidLabel.style.display = 'inline';
         }
@@ -177,24 +194,19 @@
         trialSpan.textContent = '0';
       }
 
-      loadProfiles();
+      await loadProfiles();
     });
 
     async function loadProfiles() {
       profilesList.innerHTML = '';
+      const snap = await getDocs(collection(db, 'users'));
 
-      const q = query(
-        collection(db, 'users'),
-        where('uid', '!=', currentUser.uid)
-      );
-
-      const snap = await getDocs(q);
       if (snap.empty) {
         profilesList.innerHTML = `
           <div class="profile-card">
             <div class="profile-avatar">👋</div>
-            <h3>No other members yet</h3>
-            <p class="muted">Create a second test account to see how profiles appear.</p>
+            <h3>No members yet</h3>
+            <p class="muted">Create a second account to see how this looks with more people.</p>
           </div>
         `;
         return;
@@ -202,13 +214,16 @@
 
       snap.forEach((docSnap) => {
         const data = docSnap.data();
+        const isSelf = data.uid === currentUser.uid;
+
         const card = document.createElement('div');
         card.className = 'profile-card';
         card.innerHTML = `
           <div class="profile-avatar">${data.emoji || '😈'}</div>
           <h3>${data.name || (data.email ? data.email.split('@')[0] : 'Member')}</h3>
-          <p class="muted">${data.bio || 'Say hi and see where it goes.'}</p>
+          <p class="muted">${data.bio || (isSelf ? 'This is your profile.' : 'Say hi and see where it goes.')}</p>
           <div class="status">${data.isPaid ? 'Paid member' : 'On trial'}</div>
+          ${isSelf ? '<div class="tag-self">You</div>' : ''}
         `;
         profilesList.appendChild(card);
       });
@@ -218,6 +233,10 @@
       await signOut(auth);
       localStorage.removeItem('user');
       window.location.href = 'index.html';
+    };
+
+    window.goProfile = () => {
+      window.location.href = 'profile.html';
     };
   </script>
 </body>
