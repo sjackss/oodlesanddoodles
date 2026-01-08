@@ -2,87 +2,115 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>oodles&doodles – Profile</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Setup - Oodles & Doodles</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; color: #fff; padding: 20px; }
+    .container { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 16px; padding: 40px; width: 100%; max-width: 500px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+    h1 { font-size: 28px; margin-bottom: 10px; text-align: center; }
+    p { text-align: center; margin-bottom: 30px; opacity: 0.9; }
+    label { display: block; margin-bottom: 8px; font-weight: 500; }
+    input, textarea, select { width: 100%; padding: 12px; margin-bottom: 20px; border: none; border-radius: 8px; background: rgba(255,255,255,0.2); color: #fff; font-size: 16px; }
+    input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.6); }
+    textarea { resize: vertical; min-height: 100px; }
+    button { width: 100%; padding: 14px; background: #fff; color: #667eea; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,255,255,0.3); }
+    .error { background: rgba(255,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 20px; display: none; }
+  </style>
 </head>
-<body class="app-body">
-  <header class="top-bar">
-    <div class="logo">oodles&doodles</div>
-    <nav class="top-nav">
-      <a href="browse.html" class="nav-link">Browse</a>
-      <a href="matches.html" class="nav-link">Matches</a>
-      <a href="profile.html" class="nav-link active">Profile</a>
-      <a href="settings.html" class="nav-link">Settings</a>
-    </nav>
-  </header>
+<body>
+  <div class="container">
+    <h1>✨ Create Your Profile</h1>
+    <p>Let's set up your Oodles & Doodles profile</p>
+    <div class="error" id="error"></div>
+    <form id="profileForm">
+      <label>Display Name *</label>
+      <input type="text" id="displayName" placeholder="e.g., Alex" required>
+      
+      <label>Age *</label>
+      <input type="number" id="age" min="18" max="99" placeholder="18+" required>
+      
+      <label>City *</label>
+      <input type="text" id="city" placeholder="e.g., Brisbane" required>
+      
+      <label>Country *</label>
+      <select id="country" required>
+        <option value="Australia">Australia</option>
+        <option value="New Zealand">New Zealand</option>
+        <option value="United Kingdom">United Kingdom</option>
+        <option value="United States">United States</option>
+        <option value="Canada">Canada</option>
+        <option value="Other">Other</option>
+      </select>
+      
+      <label>Bio (optional)</label>
+      <textarea id="bio" placeholder="Tell us about yourself..."></textarea>
+      
+      <button type="submit" id="submitBtn">Continue →</button>
+    </form>
+  </div>
 
-  <main class="page">
-    <section class="profile-edit">
-      <header class="section-header">
-        <h1>Your profile</h1>
-        <p>Show off your vibe so the right guys find you.</p>
-      </header>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+    import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
-      <form class="profile-form">
-        <div class="form-row">
-          <label>
-            Display name
-            <input type="text" placeholder="Jai" />
-          </label>
-          <label>
-            Age
-            <input type="number" min="18" max="99" />
-          </label>
-        </div>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBVqDVruufVu5AvXBitSoukogADaopR-7A",
+      authDomain: "oodlesanddoodles-c9202.firebaseapp.com",
+      projectId: "oodlesanddoodles-c9202",
+      storageBucket: "oodlesanddoodles-c9202.firebasestorage.app",
+      messagingSenderId: "351292337624",
+      appId: "1:351292337624:web:5ab5d5bf37b800d0da96ad"
+    };
 
-        <div class="form-row">
-          <label>
-            Pronouns
-            <select>
-              <option>he / him</option>
-              <option>they / them</option>
-              <option>he / they</option>
-              <option>she / they</option>
-              <option>custom…</option>
-            </select>
-          </label>
-          <label>
-            Identity
-            <select>
-              <option>Gay man</option>
-              <option>Bi man</option>
-              <option>Trans masc</option>
-              <option>Non‑binary</option>
-              <option>Queer</option>
-            </select>
-          </label>
-        </div>
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-        <label>
-          About you
-          <textarea placeholder="A few lines about who you are and what you’re into…"></textarea>
-        </label>
+    const form = document.getElementById('profileForm');
+    const errorDiv = document.getElementById('error');
 
-        <label>
-          What you’re looking for
-          <textarea placeholder="Dates, fun, long‑term, friends… be honest."></textarea>
-        </label>
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = '/auth.html';
+      }
+    });
 
-        <div class="form-row">
-          <label>
-            Location
-            <input type="text" placeholder="Brisbane, QLD" />
-          </label>
-          <label class="checkbox-row">
-            <input type="checkbox" checked />
-            Show my approximate location
-          </label>
-        </div>
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user = auth.currentUser;
+      if (!user) return;
 
-        <button type="submit" class="btn-primary">Save profile</button>
-      </form>
-    </section>
-  </main>
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+
+      try {
+        await setDoc(doc(db, 'users', user.uid), {
+          email: user.email,
+          displayName: document.getElementById('displayName').value.trim(),
+          age: parseInt(document.getElementById('age').value),
+          city: document.getElementById('city').value.trim(),
+          country: document.getElementById('country').value,
+          bio: document.getElementById('bio').value.trim() || '',
+          photoUrl: '',
+          subscriptionStatus: 'none',
+          isFoundingMember: false,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+
+        window.location.href = '/app.html';
+      } catch (error) {
+        console.error('Error saving profile:', error);
+        errorDiv.style.display = 'block';
+        errorDiv.textContent = 'Error saving profile: ' + error.message;
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Continue →';
+      }
+    });
+  </script>
 </body>
 </html>
