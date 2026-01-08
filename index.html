@@ -33,8 +33,19 @@
       z-index: 100;
     }
 
-    .logo {
-      font-size: 1.5rem;
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-img {
+      height: 40px;
+      width: auto;
+    }
+
+    .logo-text {
+      font-size: 1.3rem;
       font-weight: 700;
       background: linear-gradient(135deg, #ff006e, #8338ec);
       -webkit-background-clip: text;
@@ -50,9 +61,14 @@
     /* Hero Section */
     .hero {
       text-align: center;
-      padding: 6rem 2rem;
+      padding: 4rem 2rem 2rem;
       max-width: 900px;
       margin: 0 auto;
+    }
+
+    .hero-logo {
+      height: 100px;
+      margin-bottom: 2rem;
     }
 
     .hero h1 {
@@ -430,13 +446,20 @@
       .modal-content {
         padding: 2rem;
       }
+
+      .logo-text {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
   <!-- Navigation -->
   <nav>
-    <div class="logo">oodles&doodles</div>
+    <div class="logo-container">
+      <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/d2be6a60-5126-409a-99af-ba4e5d51cf3f" alt="Oodles & Doodles" class="logo-img">
+      <span class="logo-text">oodles&doodles</span>
+    </div>
     <div class="nav-buttons">
       <button class="btn btn-secondary" onclick="openLoginModal()">Login</button>
       <button class="btn btn-primary" onclick="openSignupModal()">Create Account</button>
@@ -445,6 +468,7 @@
 
   <!-- Hero Section -->
   <section class="hero">
+    <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/d2be6a60-5126-409a-99af-ba4e5d51cf3f" alt="Oodles & Doodles Logo" class="hero-logo">
     <h1>Gay Dating Without The Bullshit</h1>
     <p>Connect with local men in your area. No ads. No fake profiles. Real connections.</p>
     <div class="cta-buttons">
@@ -494,7 +518,7 @@
   <section class="pricing" id="pricing">
     <h2>Simple, Flexible Pricing</h2>
     <p style="text-align: center; color: #aaa; margin-bottom: 3rem;">Start free for 7 days. Choose your plan.</p>
-
+    
     <div class="pricing-grid">
       <!-- Weekly -->
       <div class="pricing-card">
@@ -600,9 +624,10 @@
     <p>&copy; <span id="year"></span> Oodles & Doodles. All rights reserved. | 18+ only | <a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="mailto:dannonjabbor@gmail.com">Contact</a></p>
   </footer>
 
-  <!-- Firebase -->
+  <!-- Firebase + Analytics -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
@@ -612,12 +637,20 @@
       projectId: "oodlesanddoodles-c9202",
       storageBucket: "oodlesanddoodles-c9202.firebasestorage.app",
       messagingSenderId: "351292337624",
-      appId: "1:351292337624:web:5ab5d5bf37b800d0da96ad"
+      appId: "1:351292337624:web:5ab5d5bf37b800d0da96ad",
+      measurementId: "G-495EWC1D7H"
     };
 
     const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
     const auth = getAuth(app);
     const db = getFirestore(app);
+
+    // Track page view
+    logEvent(analytics, 'page_view', {
+      page_title: document.title,
+      page_location: window.location.href
+    });
 
     // Login Handler
     window.handleLogin = async (e) => {
@@ -628,11 +661,20 @@
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
+        
+        // Track login event
+        logEvent(analytics, 'login', {
+          method: 'email'
+        });
+
         errorDiv.textContent = '';
         alert('Login successful!');
         closeLoginModal();
         window.location.href = '/dashboard.html';
       } catch (error) {
+        logEvent(analytics, 'login_failed', {
+          reason: error.code
+        });
         errorDiv.textContent = error.message;
       }
     };
@@ -653,7 +695,7 @@
 
       try {
         const userCred = await createUserWithEmailAndPassword(auth, email, password);
-
+        
         // Create user document in Firestore with 60-day trial
         const trialEnd = new Date();
         trialEnd.setDate(trialEnd.getDate() + 60);
@@ -668,14 +710,22 @@
           stripeCustomerId: null
         });
 
+        // Track signup event
+        logEvent(analytics, 'sign_up', {
+          method: 'email'
+        });
+
         successDiv.textContent = 'Account created! Redirecting to pricing...';
         errorDiv.textContent = '';
-
+        
         setTimeout(() => {
           closeSignupModal();
           document.getElementById('pricing').scrollIntoView({behavior: 'smooth'});
         }, 1500);
       } catch (error) {
+        logEvent(analytics, 'sign_up_failed', {
+          reason: error.code
+        });
         errorDiv.textContent = error.message;
       }
     };
@@ -688,6 +738,14 @@
         openSignupModal();
         return;
       }
+
+      // Track upgrade click
+      const tier = checkoutUrl.includes('14AaEQ2') ? 'weekly' : 
+                  checkoutUrl.includes('6oU9AM4') ? 'monthly' : 'yearly';
+      logEvent(analytics, 'upgrade_click', {
+        tier: tier
+      });
+
       window.location.href = checkoutUrl;
     };
 
