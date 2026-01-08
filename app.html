@@ -6,34 +6,56 @@
   <title>Browse - Oodles & Doodles</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', -apple-system, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: #fff; padding: 20px; }
-    .header { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 16px; margin-bottom: 30px; }
-    .header h1 { font-size: 24px; }
-    .header button { padding: 10px 20px; background: #fff; color: #667eea; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: #fff; }
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+    .logo { font-size: 24px; font-weight: 700; }
+    .logo span { color: #ff4081; }
+    .nav { display: flex; gap: 20px; align-items: center; }
+    .nav-btn { padding: 10px 20px; background: rgba(255,255,255,0.2); border: none; border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.3s; }
+    .nav-btn:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+    .nav-btn.active { background: #fff; color: #667eea; }
+    .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+    .page-title { font-size: 32px; margin-bottom: 30px; text-align: center; }
     .users-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-    .user-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; transition: transform 0.3s; cursor: pointer; }
-    .user-card:hover { transform: translateY(-5px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-    .user-name { font-size: 22px; font-weight: 600; margin-bottom: 5px; }
-    .user-info { opacity: 0.9; margin-bottom: 15px; }
-    .user-bio { font-size: 14px; line-height: 1.5; opacity: 0.8; }
-    .subscribe-btn { width: 100%; padding: 14px; background: #fff; color: #667eea; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 20px; }
-    .subscribe-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,255,255,0.3); }
-    .empty-state { text-align: center; padding: 60px 20px; }
+    .user-card { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 16px; padding: 24px; transition: all 0.3s; cursor: pointer; border: 2px solid transparent; }
+    .user-card:hover { transform: translateY(-8px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.3); }
+    .user-name { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+    .user-info { opacity: 0.9; margin-bottom: 12px; font-size: 15px; }
+    .user-bio { font-size: 14px; line-height: 1.6; opacity: 0.85; }
+    .subscribe-banner { background: linear-gradient(135deg, #ff4081 0%, #ff6b9d 100%); border-radius: 16px; padding: 30px; text-align: center; margin-bottom: 40px; box-shadow: 0 8px 32px rgba(255,64,129,0.3); }
+    .subscribe-banner h2 { font-size: 28px; margin-bottom: 12px; }
+    .subscribe-banner p { font-size: 16px; margin-bottom: 20px; opacity: 0.95; }
+    .subscribe-btn { padding: 14px 32px; background: #fff; color: #ff4081; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .subscribe-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,255,255,0.4); }
+    .empty-state { text-align: center; padding: 80px 20px; }
+    .empty-state h2 { font-size: 28px; margin-bottom: 16px; opacity: 0.9; }
+    .empty-state p { font-size: 16px; opacity: 0.7; }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1>💖 Discover People</h1>
-    <button id="logoutBtn">Logout</button>
+    <div class="logo">oodles<span>&</span>doodles</div>
+    <nav class="nav">
+      <a href="/app.html" class="nav-btn active">💖 Discover</a>
+      <a href="/profile.html" class="nav-btn">👤 My Profile</a>
+      <button id="logoutBtn" class="nav-btn">Logout</button>
+    </nav>
   </div>
-  <div id="usersGrid" class="users-grid"></div>
-  <div id="emptyState" class="empty-state" style="display: none;">
-    <h2>No users yet</h2>
-    <p>Be the first to join!</p>
+
+  <div class="container">
+    <div class="subscribe-banner">
+      <h2>🌟 Unlock Full Access</h2>
+      <p>Subscribe to message unlimited people and unlock all features!</p>
+      <button class="subscribe-btn" id="subscribeBtn">Subscribe: AU$88.86/year (First 1,000 get 60 days free!)</button>
+    </div>
+
+    <h1 class="page-title">💖 Discover People</h1>
+    <div id="usersGrid" class="users-grid"></div>
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <h2>No users yet</h2>
+      <p>Be the first to complete your profile and start connecting!</p>
+    </div>
   </div>
-  <button class="subscribe-btn" id="subscribeBtn" style="max-width: 400px; margin: 40px auto; display: block;">
-    🌟 Subscribe: AU$88.86/year (First 1,000 get 60 days free!)
-  </button>
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
@@ -41,7 +63,13 @@
     import { getFirestore, collection, getDocs, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
     const firebaseConfig = {
-appId: "1:178223482356:web:b6a1f8e5f5a3a3a3a3a3a3"    };
+      apiKey: "AIzaSyBVqDVruufVu5AvXBitSouKogADaopR-7A",
+      authDomain: "oodlesanddoodles-c9202.firebaseapp.com",
+      projectId: "oodlesanddoodles-c9202",
+      storageBucket: "oodlesanddoodles-c9202.firebasestorage.app",
+      messagingSenderId: "178223482356",
+      appId: "1:178223482356:web:b6a1f8e5f5a3a3a3a3a3a3"
+    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -105,12 +133,9 @@ appId: "1:178223482356:web:b6a1f8e5f5a3a3a3a3a3a3"    };
       return text.replace(/[&<>"']/g, m => map[m]);
     }
 
-    // Stripe subscription (placeholder - need to set up Stripe products)
     document.getElementById('subscribeBtn').addEventListener('click', () => {
-    window.location.href = 'https://buy.stripe.com/test_28EbIUd0i5L1d3C290RG00';      // TODO: Replace with actual Stripe checkout URL
+      window.location.href = 'https://buy.stripe.com/test_28EbIUd0i5L1d3C290RG00';
     });
   </script>
 </body>
 </html>
-
-
