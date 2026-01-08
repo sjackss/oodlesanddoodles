@@ -1,156 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Profile - Oodles & Doodles</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Profile - Oodles & Doodles</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', -apple-system, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: #fff; }
-    .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
-    .logo { font-size: 24px; font-weight: 700; }
-    .logo span { color: #ff4081; }
-    .nav { display: flex; gap: 20px; align-items: center; }
-    .nav-btn { padding: 10px 20px; background: rgba(255,255,255,0.2); border: none; border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.3s; }
-    .nav-btn:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
-    .nav-btn.active { background: #fff; color: #667eea; }
-    .container { max-width: 600px; margin: 60px auto; padding: 0 20px; }
-    .profile-card { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 20px; padding: 40px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
-    .page-title { font-size: 32px; margin-bottom: 30px; text-align: center; }
-    .form-group { margin-bottom: 24px; }
-    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px 18px; background: rgba(255,255,255,0.9); border: 2px solid transparent; border-radius: 10px; font-size: 16px; color: #333; transition: all 0.3s; }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #ff4081; background: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,64,129,0.2); }
-    .form-group textarea { min-height: 120px; resize: vertical; font-family: inherit; }
-    .submit-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #ff4081 0%, #ff6b9d 100%); border: none; border-radius: 10px; color: #fff; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-top: 10px; }
-    .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(255,64,129,0.4); }
-    .submit-btn:active { transform: translateY(-1px); }
-    .required { color: #ff4081; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: radial-gradient(circle at top, #1a1035 0, #05010b 45%, #020009 100%);
+      color: #f9f5ff;
+      min-height: 100vh;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+    .brand { font-weight: 800; font-size: 20px; }
+    .brand span { color: #ff006e; }
+    .btn {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(90deg, #ff006e, #f97316);
+      color: #fff;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    main { max-width: 1040px; margin: 0 auto; padding: 20px; }
+    .card {
+      max-width: 480px;
+      margin: 20px auto;
+      background: rgba(15,23,42,0.9);
+      border-radius: 20px;
+      border: 1px solid rgba(148,163,184,0.7);
+      padding: 24px;
+    }
+    h2 { font-size: 24px; margin-bottom: 16px; text-align: center; }
+    label { display: block; font-size: 13px; margin-bottom: 4px; color: #cbd5e1; }
+    input, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: rgba(15,23,42,0.8);
+      color: #f9f5ff;
+      font-size: 14px;
+    }
+    textarea { resize: vertical; min-height: 80px; }
+    .muted { font-size: 12px; color: #94a3b8; margin-bottom: 10px; }
+    .status { font-size: 13px; margin-top: 6px; text-align: center; }
+    .status.ok { color: #22c55e; }
+    .status.err { color: #f97373; }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo">oodles<span>&</span>doodles</div>
-    <nav class="nav">
-      <a href="/app.html" class="nav-btn">💖 Discover</a>
-      <a href="/profile.html" class="nav-btn active">👤 My Profile</a>
-      <button id="logoutBtn" class="nav-btn">Logout</button>
-    </nav>
-  </div>
-
-  <div class="container">
-    <div class="profile-card">
-      <h1 class="page-title">👤 Complete Your Profile</h1>
-      <form id="profileForm">
-        <div class="form-group">
-          <label>Display Name <span class="required">*</span></label>
-          <input type="text" id="displayName" placeholder="e.g., Alex" required>
-        </div>
-
-        <div class="form-group">
-          <label>Age <span class="required">*</span></label>
-          <input type="number" id="age" placeholder="18+" min="18" max="99" required>
-        </div>
-
-        <div class="form-group">
-          <label>City <span class="required">*</span></label>
-          <input type="text" id="city" placeholder="e.g., Brisbane" required>
-        </div>
-
-        <div class="form-group">
-          <label>Country <span class="required">*</span></label>
-          <select id="country" required>
-            <option value="Australia">Australia</option>
-            <option value="New Zealand">New Zealand</option>
-            <option value="United Kingdom">United Kingdom</option>
-            <option value="United States">United States</option>
-            <option value="Canada">Canada</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Bio</label>
-          <textarea id="bio" placeholder="Tell us about yourself..."></textarea>
-        </div>
-
-        <button type="submit" class="submit-btn" id="submitBtn">Save Profile →</button>
-      </form>
+  <header>
+    <div class="brand">oodles<span>&</span>doodles</div>
+    <div>
+      <a href="dashboard.html" style="font-size:13px;color:#cbd5e1;margin-right:8px;">← Back to dashboard</a>
+      <button class="btn" onclick="logout()">Logout</button>
     </div>
-  </div>
+  </header>
+
+  <main>
+    <div class="card">
+      <h2>Your profile</h2>
+      <p class="muted">Add a name, emoji and a short bio so other guys know who you are.</p>
+
+      <form id="profile-form">
+        <label for="emoji">Emoji</label>
+        <input id="emoji" placeholder="😈" maxlength="2" />
+
+        <label for="name">Display name</label>
+        <input id="name" placeholder="Danny, 32" />
+
+        <label for="age">Age</label>
+        <input id="age" type="number" min="18" max="120" />
+
+        <label for="location">Location</label>
+        <input id="location" placeholder="Brisbane, QLD" />
+
+        <label for="bio">Bio</label>
+        <textarea id="bio" placeholder="What are you here for?"></textarea>
+
+        <button type="submit" class="btn" style="width:100%;margin-top:4px;">Save profile</button>
+      </form>
+
+      <div id="status" class="status"></div>
+    </div>
+  </main>
 
   <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
-    import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyBVqDVruufVu5AvXBitSouKogADaopR-7A",
+      apiKey: "AIzaSyBVqDVruufVu5AvXBitSoukogADaopR-7A",
       authDomain: "oodlesanddoodles-c9202.firebaseapp.com",
       projectId: "oodlesanddoodles-c9202",
       storageBucket: "oodlesanddoodles-c9202.firebasestorage.app",
-      messagingSenderId: "178223482356",
-      appId: "1:178223482356:web:b6a1f8e5f5a3a3a3a3a3a3"
+      messagingSenderId: "351292337624",
+      appId: "1:351292337624:web:5ab5d5bf37b800d0da96ad"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    let currentUser = null;
+
+    const form = document.getElementById('profile-form');
+    const statusBox = document.getElementById('status');
+
+    let currentUser;
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        window.location.href = '/auth.html';
+        window.location.href = 'index.html';
         return;
       }
-      
       currentUser = user;
-      
-      // Load existing profile if it exists
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        document.getElementById('displayName').value = data.displayName || '';
-        document.getElementById('age').value = data.age || '';
-        document.getElementById('city').value = data.city || '';
-        document.getElementById('country').value = data.country || 'Australia';
-        document.getElementById('bio').value = data.bio || '';
-      }
+      await loadProfile();
     });
 
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      await signOut(auth);
-      window.location.href = '/index.html';
-    });
+    async function loadProfile() {
+      const ref = doc(db, 'users', currentUser.uid);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) return;
 
-    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      const data = snap.data();
+      document.getElementById('emoji').value = data.emoji || '';
+      document.getElementById('name').value = data.name || '';
+      document.getElementById('age').value = data.age || '';
+      document.getElementById('location').value = data.location || '';
+      document.getElementById('bio').value = data.bio || '';
+    }
+
+    form.onsubmit = async (e) => {
       e.preventDefault();
-      
-      if (!currentUser) return;
-      
-      const submitBtn = document.getElementById('submitBtn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Saving...';
+      statusBox.textContent = '';
+      statusBox.className = 'status';
+
+      const emoji = document.getElementById('emoji').value || '😈';
+      const name = document.getElementById('name').value || currentUser.email.split('@')[0];
+      const age = document.getElementById('age').value || null;
+      const location = document.getElementById('location').value || '';
+      const bio = document.getElementById('bio').value || '';
 
       try {
-        await setDoc(doc(db, 'users', currentUser.uid), {
-          displayName: document.getElementById('displayName').value.trim(),
-          age: parseInt(document.getElementById('age').value),
-          city: document.getElementById('city').value.trim(),
-          country: document.getElementById('country').value,
-          bio: document.getElementById('bio').value.trim(),
-          createdAt: new Date().toISOString()
-        });
+        const ref = doc(db, 'users', currentUser.uid);
+        await setDoc(ref, {
+          uid: currentUser.uid,
+          email: currentUser.email,
+          emoji,
+          name,
+          age: age ? Number(age) : null,
+          location,
+          bio
+        }, { merge: true });
 
-        alert('✨ Profile saved successfully!');
-        window.location.href = '/app.html';
-      } catch (error) {
-        console.error('Error saving profile:', error);
-        alert('❌ Error saving profile. Please try again.');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Save Profile →';
+        statusBox.textContent = 'Profile saved.';
+        statusBox.className = 'status ok';
+      } catch (err) {
+        statusBox.textContent = 'Could not save. Please try again.';
+        statusBox.className = 'status err';
       }
-    });
+    };
+
+    window.logout = async () => {
+      await signOut(auth);
+      localStorage.removeItem('user');
+      window.location.href = 'index.html';
+    };
   </script>
 </body>
 </html>
