@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oodles & Doodles – Gay Dating Without The Bullshit</title>
+  <meta charset="UTF-8"><br>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><br>
+  <title>Oodles & Doodles – Gay Dating Without The Bullshit</title><br>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
@@ -18,7 +17,6 @@
       min-height: 100vh;
       overflow-x: hidden;
     }
-
     /* Navigation */
     nav {
       display: flex;
@@ -32,18 +30,15 @@
       top: 0;
       z-index: 100;
     }
-
     .logo-container {
       display: flex;
       align-items: center;
       gap: 0.75rem;
     }
-
     .logo-img {
       height: 40px;
       width: auto;
     }
-
     .logo-text {
       font-size: 1.3rem;
       font-weight: 700;
@@ -52,12 +47,10 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-
     .nav-buttons {
       display: flex;
       gap: 1rem;
     }
-
     /* Hero Section */
     .hero {
       text-align: center;
@@ -65,12 +58,10 @@
       max-width: 900px;
       margin: 0 auto;
     }
-
     .hero-logo {
       height: 100px;
       margin-bottom: 2rem;
     }
-
     .hero h1 {
       font-size: 3.5rem;
       margin-bottom: 1rem;
@@ -81,14 +72,12 @@
       font-weight: 800;
       line-height: 1.2;
     }
-
     .hero p {
       font-size: 1.3rem;
       color: #ccc;
       margin-bottom: 2rem;
       line-height: 1.6;
     }
-
     .cta-buttons {
       display: flex;
       gap: 1rem;
@@ -96,7 +85,6 @@
       margin-bottom: 3rem;
       flex-wrap: wrap;
     }
-
     .btn {
       padding: 0.875rem 2rem;
       border: none;
@@ -108,35 +96,29 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-
     .btn-primary {
       background: linear-gradient(135deg, #ff006e, #8338ec);
       color: white;
     }
-
     .btn-primary:hover {
       transform: translateY(-2px);
       box-shadow: 0 10px 30px rgba(255, 0, 110, 0.3);
     }
-
     .btn-secondary {
       background: transparent;
       color: white;
       border: 2px solid rgba(255, 255, 255, 0.3);
     }
-
     .btn-secondary:hover {
       border-color: #ff006e;
       background: rgba(255, 0, 110, 0.1);
     }
-
     /* Pricing Section */
     .pricing {
       padding: 4rem 2rem;
       max-width: 1200px;
       margin: 0 auto;
     }
-
     .pricing h2 {
       text-align: center;
       font-size: 2.5rem;
@@ -146,14 +128,12 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-
     .pricing-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 2rem;
       margin-bottom: 3rem;
     }
-
     .pricing-card {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(10px);
@@ -164,7 +144,6 @@
       position: relative;
       overflow: hidden;
     }
-
     .pricing-card::before {
       content: '';
       position: absolute;
@@ -176,27 +155,22 @@
       opacity: 0;
       transition: opacity 0.3s ease;
     }
-
     .pricing-card:hover {
       transform: translateY(-5px);
       border-color: rgba(255, 0, 110, 0.3);
       background: rgba(255, 255, 255, 0.08);
     }
-
     .pricing-card:hover::before {
       opacity: 1;
     }
-
     .pricing-card.featured {
       border: 2px solid #ff006e;
       transform: scale(1.05);
     }
-
     .pricing-card h3 {
       font-size: 1.5rem;
       margin-bottom: 0.5rem;
     }
-
     .pricing-badge {
       display: inline-block;
       background: #ff006e;
@@ -207,48 +181,40 @@
       margin-bottom: 1rem;
       font-weight: 600;
     }
-
     .price {
       font-size: 2.5rem;
       font-weight: 700;
       color: #ff006e;
       margin: 1rem 0;
     }
-
     .price-period {
       color: #aaa;
       font-size: 0.95rem;
     }
-
     .pricing-features {
       list-style: none;
       margin: 1.5rem 0;
       color: #ccc;
     }
-
     .pricing-features li {
       padding: 0.5rem 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
-
     .pricing-features li:before {
       content: '✓ ';
       color: #ff006e;
       font-weight: bold;
       margin-right: 0.5rem;
     }
-
     .btn-subscribe {
       width: 100%;
       margin-top: 1.5rem;
       background: linear-gradient(135deg, #ff006e, #8338ec);
       color: white;
     }
-
     .btn-subscribe:hover {
       box-shadow: 0 10px 30px rgba(255, 0, 110, 0.3);
     }
-
     /* Features Section */
     .features {
       padding: 4rem 2rem;
@@ -256,7 +222,6 @@
       max-width: 1200px;
       margin: 0 auto;
     }
-
     .features h2 {
       text-align: center;
       font-size: 2.5rem;
@@ -266,13 +231,11 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-
     .features-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 2rem;
     }
-
     .feature-card {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(10px);
@@ -281,131 +244,18 @@
       padding: 2rem;
       text-align: center;
     }
-
     .feature-icon {
       font-size: 2.5rem;
       margin-bottom: 1rem;
     }
-
     .feature-card h3 {
       font-size: 1.2rem;
       margin-bottom: 0.5rem;
     }
-
     .feature-card p {
       color: #ccc;
       line-height: 1.5;
     }
-
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(5px);
-    }
-
-    .modal.active {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-content {
-      background: linear-gradient(135deg, #1a1535, #2d2450);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 3rem;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    }
-
-    .close {
-      float: right;
-      font-size: 2rem;
-      font-weight: bold;
-      cursor: pointer;
-      color: #aaa;
-      transition: color 0.3s;
-    }
-
-    .close:hover {
-      color: #fff;
-    }
-
-    .modal h2 {
-      margin-bottom: 1.5rem;
-      color: #fff;
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: #ddd;
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 0.875rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.05);
-      color: white;
-      font-size: 1rem;
-      transition: all 0.3s;
-    }
-
-    .form-group input:focus {
-      outline: none;
-      border-color: #ff006e;
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .form-group input::placeholder {
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .btn-form {
-      width: 100%;
-      padding: 0.875rem;
-      background: linear-gradient(135deg, #ff006e, #8338ec);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .btn-form:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(255, 0, 110, 0.3);
-    }
-
-    .error {
-      color: #ff6b6b;
-      font-size: 0.875rem;
-      margin-top: 0.25rem;
-    }
-
-    .success {
-      color: #51cf66;
-      font-size: 0.875rem;
-      margin-top: 0.25rem;
-    }
-
     /* Footer */
     footer {
       background: rgba(0, 0, 0, 0.4);
@@ -415,38 +265,27 @@
       color: #aaa;
       margin-top: 4rem;
     }
-
     footer a {
       color: #ff006e;
       text-decoration: none;
       transition: color 0.3s;
     }
-
     footer a:hover {
       color: #8338ec;
     }
-
     @media (max-width: 768px) {
       .hero h1 {
         font-size: 2.5rem;
       }
-
       .hero p {
         font-size: 1.1rem;
       }
-
       .cta-buttons {
         flex-direction: column;
       }
-
       .btn {
         width: 100%;
       }
-
-      .modal-content {
-        padding: 2rem;
-      }
-
       .logo-text {
         display: none;
       }
@@ -461,8 +300,9 @@
       <span class="logo-text">oodles&doodles</span>
     </div>
     <div class="nav-buttons">
-      <button class="btn btn-secondary" onclick="openLoginModal()">Login</button>
-      <button class="btn btn-primary" onclick="openSignupModal()">Create Account</button>
+      <!-- Updated buttons: go to auth.html -->
+      <button class="btn btn-secondary" onclick="window.location.href='auth.html'">Login</button>
+      <button class="btn btn-primary" onclick="window.location.href='auth.html'">Create Account</button>
     </div>
   </nav>
 
@@ -472,7 +312,7 @@
     <h1>Gay Dating Without The Bullshit</h1>
     <p>Connect with local men in your area. No ads. No fake profiles. Real connections.</p>
     <div class="cta-buttons">
-      <button class="btn btn-primary" onclick="openSignupModal()">Start Free Trial</button>
+      <button class="btn btn-primary" onclick="window.location.href='auth.html'">Start Free Trial</button>
       <button class="btn btn-secondary" onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'})">See Pricing</button>
     </div>
   </section>
@@ -518,7 +358,7 @@
   <section class="pricing" id="pricing">
     <h2>Simple, Flexible Pricing</h2>
     <p style="text-align: center; color: #aaa; margin-bottom: 3rem;">Start free for 7 days. Choose your plan.</p>
-    
+
     <div class="pricing-grid">
       <!-- Weekly -->
       <div class="pricing-card">
@@ -571,65 +411,16 @@
     </div>
   </section>
 
-  <!-- Login Modal -->
-  <div id="loginModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeLoginModal()">&times;</span>
-      <h2>Login</h2>
-      <form onsubmit="handleLogin(event)">
-        <div class="form-group">
-          <label for="loginEmail">Email</label>
-          <input type="email" id="loginEmail" required placeholder="your@email.com">
-        </div>
-        <div class="form-group">
-          <label for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" required placeholder="••••••••">
-        </div>
-        <div id="loginError" class="error"></div>
-        <button type="submit" class="btn-form">Login</button>
-      </form>
-      <p style="text-align: center; margin-top: 1rem; color: #aaa;">Don't have an account? <a href="#" onclick="switchToSignup()" style="color: #ff006e; cursor: pointer;">Sign up</a></p>
-    </div>
-  </div>
-
-  <!-- Signup Modal -->
-  <div id="signupModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeSignupModal()">&times;</span>
-      <h2>Create Account</h2>
-      <form onsubmit="handleSignup(event)">
-        <div class="form-group">
-          <label for="signupEmail">Email</label>
-          <input type="email" id="signupEmail" required placeholder="your@email.com">
-        </div>
-        <div class="form-group">
-          <label for="signupPassword">Password</label>
-          <input type="password" id="signupPassword" required placeholder="••••••••" minlength="6">
-          <small style="color: #aaa;">Minimum 6 characters</small>
-        </div>
-        <div class="form-group">
-          <label for="signupConfirm">Confirm Password</label>
-          <input type="password" id="signupConfirm" required placeholder="••••••••">
-        </div>
-        <div id="signupError" class="error"></div>
-        <div id="signupSuccess" class="success"></div>
-        <button type="submit" class="btn-form">Create Account & Choose Plan</button>
-      </form>
-      <p style="text-align: center; margin-top: 1rem; color: #aaa;">Already have an account? <a href="#" onclick="switchToLogin()" style="color: #ff006e; cursor: pointer;">Login</a></p>
-    </div>
-  </div>
-
   <!-- Footer -->
   <footer>
-    <p>&copy; <span id="year"></span> Oodles & Doodles. All rights reserved. | 18+ only | <a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="mailto:dannonjabbor@gmail.com">Contact</a></p>
+    <p>© <span id="year"></span> Oodles & Doodles. All rights reserved. | 18+ only | <a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="mailto:dannonjabbor@gmail.com">Contact</a></p>
   </footer>
 
-  <!-- Firebase + Analytics -->
+  <!-- Firebase + Analytics (unchanged logic) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
     import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBVqDVruufVu5AvXBitSoukogADaopR-7A",
@@ -644,7 +435,6 @@
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const auth = getAuth(app);
-    const db = getFirestore(app);
 
     // Track page view
     logEvent(analytics, 'page_view', {
@@ -652,148 +442,22 @@
       page_location: window.location.href
     });
 
-    // Login Handler
-    window.handleLogin = async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-      const errorDiv = document.getElementById('loginError');
-
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        
-        // Track login event
-        logEvent(analytics, 'login', {
-          method: 'email'
-        });
-
-        errorDiv.textContent = '';
-        alert('Login successful!');
-        closeLoginModal();
-        window.location.href = '/dashboard.html';
-      } catch (error) {
-        logEvent(analytics, 'login_failed', {
-          reason: error.code
-        });
-        errorDiv.textContent = error.message;
-      }
-    };
-
-    // Signup Handler
-    window.handleSignup = async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('signupEmail').value;
-      const password = document.getElementById('signupPassword').value;
-      const confirm = document.getElementById('signupConfirm').value;
-      const errorDiv = document.getElementById('signupError');
-      const successDiv = document.getElementById('signupSuccess');
-
-      if (password !== confirm) {
-        errorDiv.textContent = 'Passwords do not match';
-        return;
-      }
-
-      try {
-        const userCred = await createUserWithEmailAndPassword(auth, email, password);
-        
-        // Create user document in Firestore with 60-day trial
-        const trialEnd = new Date();
-        trialEnd.setDate(trialEnd.getDate() + 60);
-
-        await addDoc(collection(db, "users"), {
-          uid: userCred.user.uid,
-          email: email,
-          createdAt: serverTimestamp(),
-          trialEnd: trialEnd,
-          subscriptionTier: "free_trial",
-          isPaid: false,
-          stripeCustomerId: null
-        });
-
-        // Track signup event
-        logEvent(analytics, 'sign_up', {
-          method: 'email'
-        });
-
-        successDiv.textContent = 'Account created! Redirecting to pricing...';
-        errorDiv.textContent = '';
-        
-        setTimeout(() => {
-          closeSignupModal();
-          document.getElementById('pricing').scrollIntoView({behavior: 'smooth'});
-        }, 1500);
-      } catch (error) {
-        logEvent(analytics, 'sign_up_failed', {
-          reason: error.code
-        });
-        errorDiv.textContent = error.message;
-      }
-    };
-
-    // Redirect to Stripe
+    // Stripe redirect utility
     window.redirectToStripe = (checkoutUrl) => {
       const user = auth.currentUser;
       if (!user) {
         alert('Please create an account first');
-        openSignupModal();
+        window.location.href = 'auth.html';
         return;
       }
-
-      // Track upgrade click
-      const tier = checkoutUrl.includes('14AaEQ2') ? 'weekly' : 
-                  checkoutUrl.includes('6oU9AM4') ? 'monthly' : 'yearly';
-      logEvent(analytics, 'upgrade_click', {
-        tier: tier
-      });
-
+      const tier = checkoutUrl.includes('14AaEQ2') ? 'weekly'
+        : checkoutUrl.includes('6oU9AM4') ? 'monthly'
+        : 'yearly';
+      logEvent(analytics, 'upgrade_click', { tier });
       window.location.href = checkoutUrl;
     };
 
     document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
-
-  <!-- Modal Functions -->
-  <script>
-    function openLoginModal() {
-      document.getElementById('loginModal').classList.add('active');
-    }
-
-    function closeLoginModal() {
-      document.getElementById('loginModal').classList.remove('active');
-      document.getElementById('loginError').textContent = '';
-    }
-
-    function openSignupModal() {
-      document.getElementById('signupModal').classList.add('active');
-    }
-
-    function closeSignupModal() {
-      document.getElementById('signupModal').classList.remove('active');
-      document.getElementById('signupError').textContent = '';
-      document.getElementById('signupSuccess').textContent = '';
-    }
-
-    function switchToLogin() {
-      closeSignupModal();
-      openLoginModal();
-    }
-
-    function switchToSignup() {
-      closeLoginModal();
-      openSignupModal();
-    }
-
-    // Close modal on outside click
-    window.onclick = function(event) {
-      const loginModal = document.getElementById('loginModal');
-      const signupModal = document.getElementById('signupModal');
-      if (event.target == loginModal) {
-        closeLoginModal();
-      }
-      if (event.target == signupModal) {
-        closeSignupModal();
-      }
-    }
   </script>
 </body>
 </html>
