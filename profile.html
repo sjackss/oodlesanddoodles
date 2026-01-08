@@ -3,109 +3,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile Setup - Oodles & Doodles</title>
+  <title>My Profile - Oodles & Doodles</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', -apple-system, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; color: #fff; padding: 20px; }
-    .container { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 16px; padding: 40px; width: 100%; max-width: 500px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-    h1 { font-size: 28px; margin-bottom: 10px; text-align: center; }
-    p { text-align: center; margin-bottom: 30px; opacity: 0.9; }
-    label { display: block; margin-bottom: 8px; font-weight: 500; }
-    input, textarea, select { width: 100%; padding: 12px; margin-bottom: 20px; border: none; border-radius: 8px; background: rgba(255,255,255,0.2); color: #fff; font-size: 16px; }
-    input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.6); }
-    textarea { resize: vertical; min-height: 100px; }
-    button { width: 100%; padding: 14px; background: #fff; color: #667eea; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-    button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,255,255,0.3); }
-    .error { background: rgba(255,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 20px; display: none; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: #fff; }
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+    .logo { font-size: 24px; font-weight: 700; }
+    .logo span { color: #ff4081; }
+    .nav { display: flex; gap: 20px; align-items: center; }
+    .nav-btn { padding: 10px 20px; background: rgba(255,255,255,0.2); border: none; border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.3s; }
+    .nav-btn:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+    .nav-btn.active { background: #fff; color: #667eea; }
+    .container { max-width: 600px; margin: 60px auto; padding: 0 20px; }
+    .profile-card { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 20px; padding: 40px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .page-title { font-size: 32px; margin-bottom: 30px; text-align: center; }
+    .form-group { margin-bottom: 24px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px 18px; background: rgba(255,255,255,0.9); border: 2px solid transparent; border-radius: 10px; font-size: 16px; color: #333; transition: all 0.3s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #ff4081; background: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,64,129,0.2); }
+    .form-group textarea { min-height: 120px; resize: vertical; font-family: inherit; }
+    .submit-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #ff4081 0%, #ff6b9d 100%); border: none; border-radius: 10px; color: #fff; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-top: 10px; }
+    .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(255,64,129,0.4); }
+    .submit-btn:active { transform: translateY(-1px); }
+    .required { color: #ff4081; }
   </style>
 </head>
 <body>
+  <div class="header">
+    <div class="logo">oodles<span>&</span>doodles</div>
+    <nav class="nav">
+      <a href="/app.html" class="nav-btn">💖 Discover</a>
+      <a href="/profile.html" class="nav-btn active">👤 My Profile</a>
+      <button id="logoutBtn" class="nav-btn">Logout</button>
+    </nav>
+  </div>
+
   <div class="container">
-    <h1>✨ Create Your Profile</h1>
-    <p>Let's set up your Oodles & Doodles profile</p>
-    <div class="error" id="error"></div>
-    <form id="profileForm">
-      <label>Display Name *</label>
-      <input type="text" id="displayName" placeholder="e.g., Alex" required>
-      
-      <label>Age *</label>
-      <input type="number" id="age" min="18" max="99" placeholder="18+" required>
-      
-      <label>City *</label>
-      <input type="text" id="city" placeholder="e.g., Brisbane" required>
-      
-      <label>Country *</label>
-      <select id="country" required>
-        <option value="Australia">Australia</option>
-        <option value="New Zealand">New Zealand</option>
-        <option value="United Kingdom">United Kingdom</option>
-        <option value="United States">United States</option>
-        <option value="Canada">Canada</option>
-        <option value="Other">Other</option>
-      </select>
-      
-      <label>Bio (optional)</label>
-      <textarea id="bio" placeholder="Tell us about yourself..."></textarea>
-      
-      <button type="submit" id="submitBtn">Continue →</button>
-    </form>
+    <div class="profile-card">
+      <h1 class="page-title">👤 Complete Your Profile</h1>
+      <form id="profileForm">
+        <div class="form-group">
+          <label>Display Name <span class="required">*</span></label>
+          <input type="text" id="displayName" placeholder="e.g., Alex" required>
+        </div>
+
+        <div class="form-group">
+          <label>Age <span class="required">*</span></label>
+          <input type="number" id="age" placeholder="18+" min="18" max="99" required>
+        </div>
+
+        <div class="form-group">
+          <label>City <span class="required">*</span></label>
+          <input type="text" id="city" placeholder="e.g., Brisbane" required>
+        </div>
+
+        <div class="form-group">
+          <label>Country <span class="required">*</span></label>
+          <select id="country" required>
+            <option value="Australia">Australia</option>
+            <option value="New Zealand">New Zealand</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="United States">United States</option>
+            <option value="Canada">Canada</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Bio</label>
+          <textarea id="bio" placeholder="Tell us about yourself..."></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Save Profile →</button>
+      </form>
+    </div>
   </div>
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
-    import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+    import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
     const firebaseConfig = {
-appId: "1:178223482356:web:b6a1f8e5f5a3a3a3a3a3a3"    };
+      apiKey: "AIzaSyBVqDVruufVu5AvXBitSouKogADaopR-7A",
+      authDomain: "oodlesanddoodles-c9202.firebaseapp.com",
+      projectId: "oodlesanddoodles-c9202",
+      storageBucket: "oodlesanddoodles-c9202.firebasestorage.app",
+      messagingSenderId: "178223482356",
+      appId: "1:178223482356:web:b6a1f8e5f5a3a3a3a3a3a3"
+    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    let currentUser = null;
 
-    const form = document.getElementById('profileForm');
-    const errorDiv = document.getElementById('error');
-
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.href = '/auth.html';
+        return;
+      }
+      
+      currentUser = user;
+      
+      // Load existing profile if it exists
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        document.getElementById('displayName').value = data.displayName || '';
+        document.getElementById('age').value = data.age || '';
+        document.getElementById('city').value = data.city || '';
+        document.getElementById('country').value = data.country || 'Australia';
+        document.getElementById('bio').value = data.bio || '';
       }
     });
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const user = auth.currentUser;
-      if (!user) return;
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = '/index.html';
+    });
 
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!currentUser) return;
+      
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Saving...';
 
       try {
-        await setDoc(doc(db, 'users', user.uid), {
-          email: user.email,
+        await setDoc(doc(db, 'users', currentUser.uid), {
           displayName: document.getElementById('displayName').value.trim(),
           age: parseInt(document.getElementById('age').value),
           city: document.getElementById('city').value.trim(),
           country: document.getElementById('country').value,
-          bio: document.getElementById('bio').value.trim() || '',
-          photoUrl: '',
-          subscriptionStatus: 'none',
-          isFoundingMember: false,
-          createdAt: new Date(),
-          updatedAt: new Date()
+          bio: document.getElementById('bio').value.trim(),
+          createdAt: new Date().toISOString()
         });
 
+        alert('✨ Profile saved successfully!');
         window.location.href = '/app.html';
       } catch (error) {
         console.error('Error saving profile:', error);
-        errorDiv.style.display = 'block';
-        errorDiv.textContent = 'Error saving profile: ' + error.message;
+        alert('❌ Error saving profile. Please try again.');
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Continue →';
+        submitBtn.textContent = 'Save Profile →';
       }
     });
   </script>
 </body>
 </html>
-
