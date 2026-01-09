@@ -4,7 +4,500 @@
   <meta charset="UTF-8">
   <title>oodles&doodles – Chat</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #050818;
+      color: #f5f5f5;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: #0b1024;
+      border-bottom: 1px solid #272b4a;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo-image {
+      height: 32px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .top-nav {
+      display: flex;
+      gap: 8px;
+    }
+    .nav-link {
+      color: #b7c0ff;
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 14px;
+    }
+    .nav-link.active {
+      background: linear-gradient(120deg, #ff6ad5, #7873f5);
+      color: #050818;
+      font-weight: 600;
+    }
+    .user-pill {
+      font-size: 12px;
+      color: #9aa3ff;
+    }
+
+    .page {
+      padding: 12px 16px 20px;
+    }
+    .chat-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 16px;
+      min-height: calc(100vh - 72px);
+    }
+    @media (max-width: 900px) {
+      .chat-layout {
+        grid-template-columns: 1fr;
+      }
+      .chat-sidebar {
+        display: none; /* no persistent list: ephemeral only */
+      }
+    }
+
+    .chat-sidebar {
+      background: #0b1024;
+      border-radius: 16px;
+      border: 1px solid #272b4a;
+      padding: 14px;
+    }
+    .chat-sidebar h2 {
+      font-size: 16px;
+      margin: 0 0 8px;
+    }
+    .chat-sidebar p {
+      font-size: 12px;
+      color: #9aa3ff;
+      margin: 0;
+    }
+
+    .chat-main {
+      background: #0b1024;
+      border-radius: 16px;
+      border: 1px solid #272b4a;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .chat-header {
+      padding: 12px 14px;
+      border-bottom: 1px solid #272b4a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .chat-header h1 {
+      font-size: 16px;
+      margin: 0 0 4px;
+    }
+    .chat-header p {
+      font-size: 12px;
+      color: #9aa3ff;
+      margin: 0;
+    }
+    .chat-actions button {
+      background: #151a33;
+      color: #d7e0ff;
+      border-radius: 999px;
+      border: none;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      margin-left: 4px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 12px 14px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .message {
+      max-width: 80%;
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size: 14px;
+      position: relative;
+      word-wrap: break-word;
+    }
+    .message.sent {
+      align-self: flex-end;
+      background: linear-gradient(120deg, #ff6ad5, #7873f5);
+      color: #050818;
+      border-bottom-right-radius: 2px;
+    }
+    .message.received {
+      align-self: flex-start;
+      background: #151a33;
+      border-bottom-left-radius: 2px;
+    }
+    .message img {
+      max-width: 220px;
+      border-radius: 10px;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .message .time {
+      font-size: 11px;
+      opacity: 0.7;
+      display: block;
+      margin-top: 2px;
+      text-align: right;
+    }
+    .system-note {
+      font-size: 11px;
+      text-align: center;
+      color: #9aa3ff;
+      margin-bottom: 6px;
+    }
+
+    .chat-input-row {
+      border-top: 1px solid #272b4a;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .chat-input-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #9aa3ff;
+    }
+    .chat-input-tools input[type="file"] {
+      font-size: 11px;
+      max-width: 180px;
+    }
+    .chat-input {
+      display: flex;
+      gap: 8px;
+    }
+    .chat-input input[type="text"] {
+      flex: 1;
+      padding: 10px 12px;
+      background: #050818;
+      border: 1px solid #272b4a;
+      border-radius: 999px;
+      color: #f5f5f5;
+      font-size: 14px;
+    }
+    .chat-input button {
+      padding: 0 16px;
+      background: linear-gradient(120deg, #ff6ad5, #7873f5);
+      border-radius: 999px;
+      border: none;
+      color: #050818;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+  </style>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      collection,
+      addDoc,
+      query,
+      where,
+      orderBy,
+      onSnapshot,
+      getDocs,
+      deleteDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import {
+      getStorage,
+      ref as storageRef,
+      uploadBytes,
+      getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js"; // for image messages [web:26]
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBVqDVruufVu5AvXBitSoukogADaopR-7A",
+      authDomain: "oodlesanddoodles-c9202.firebaseapp.com",
+      projectId: "oodlesanddoodles-c9202",
+      storageBucket: "oodlesanddoodles-c9202.firebasestorage.app",
+      messagingSenderId: "351292337624",
+      appId: "1:351292337624:web:5ab5d5bf37b800d0da96ad"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    let currentUser = null;
+    let otherUser = null;
+    let chatId = null;
+    let unsubscribeMessages = null;
+    let pendingImageFile = null;
+
+    function getParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    function getChatIdForPair(uid1, uid2) {
+      return [uid1, uid2].sort().join("_");
+    }
+
+    async function fetchUserByUid(uid) {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("uid", "==", uid));
+      const snap = await getDocs(q);
+      if (snap.empty) return null;
+      return { id: snap.docs[0].id, ...snap.docs[0].data() };
+    }
+
+    function formatTime(ts) {
+      if (!ts) return "";
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function renderHeader() {
+      const headerName = document.getElementById("chatHeaderName");
+      const headerMeta = document.getElementById("chatHeaderMeta");
+      if (!otherUser) {
+        headerName.textContent = "Loading…";
+        headerMeta.textContent = "";
+        return;
+      }
+      const name = otherUser.profileName || "Anonymous";
+      const age = otherUser.age ? `, ${otherUser.age}` : "";
+      headerName.textContent = `${name}${age}`;
+      headerMeta.textContent = otherUser.location || "Somewhere nearby";
+    }
+
+    function renderSystemNote() {
+      const note = document.getElementById("systemNote");
+      note.textContent =
+        "Chats are ephemeral. Messages and media vanish when you log out. Screenshots/screen recording are strongly discouraged but cannot be fully blocked on web.";
+    }
+
+    function scrollMessagesToBottom() {
+      const container = document.querySelector(".chat-messages");
+      if (!container) return;
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function subscribeToMessages() {
+      if (!chatId) return;
+      const msgsRef = collection(db, "ephemeralChats", chatId, "messages");
+      const qMsgs = query(msgsRef, orderBy("createdAt", "asc"));
+      const messagesEl = document.querySelector(".chat-messages");
+
+      if (unsubscribeMessages) unsubscribeMessages();
+      unsubscribeMessages = onSnapshot(qMsgs, (snap) => {
+        messagesEl.innerHTML = "";
+        snap.forEach((docSnap) => {
+          const msg = docSnap.data();
+          const div = document.createElement("div");
+          const isMine = msg.fromUid === currentUser.uid;
+          div.className = "message " + (isMine ? "sent" : "received");
+
+          let inner = "";
+          if (msg.imageUrl) {
+            inner += `<img src="${msg.imageUrl}" alt="Image message" />`;
+          }
+          if (msg.text) {
+            inner += `<p>${msg.text}</p>`;
+          }
+          inner += `<span class="time">${formatTime(msg.createdAt)}</span>`;
+          div.innerHTML = inner;
+          messagesEl.appendChild(div);
+        });
+        scrollMessagesToBottom();
+      });
+    }
+
+    async function ensureChatDocument() {
+      if (!currentUser || !otherUser) return;
+      chatId = getChatIdForPair(currentUser.uid, otherUser.uid);
+      const chatRef = doc(db, "ephemeralChats", chatId);
+      const snap = await getDoc(chatRef);
+      if (!snap.exists()) {
+        await setChatDoc(chatRef);
+      }
+      subscribeToMessages();
+    }
+
+    async function setChatDoc(chatRef) {
+      await chatRef.set(
+        {
+          participants: [currentUser.uid, otherUser.uid],
+          createdAt: serverTimestamp(),
+          lastActivity: serverTimestamp()
+        },
+        { merge: true }
+      );
+    }
+
+    async function sendMessage(text) {
+      if (!currentUser || !otherUser || !chatId) return;
+      const trimmed = (text || "").trim();
+      if (!trimmed && !pendingImageFile) return;
+
+      let imageUrl = null;
+      if (pendingImageFile) {
+        const maxSizeBytes = 10 * 1024 * 1024;
+        if (pendingImageFile.size > maxSizeBytes) {
+          alert("Please choose an image under 10 MB.");
+          return;
+        }
+        const allowed = ["image/jpeg", "image/png", "image/webp"];
+        if (!allowed.includes(pendingImageFile.type)) {
+          alert("Please choose a JPG, PNG, or WEBP image.");
+          return;
+        }
+        try {
+          const path = `chatMedia/${chatId}/${Date.now()}_${pendingImageFile.name}`;
+          const refObj = storageRef(storage, path);
+          await uploadBytes(refObj, pendingImageFile);
+          imageUrl = await getDownloadURL(refObj);
+        } catch (e) {
+          console.error(e);
+          alert("Error uploading image. Try again.");
+          return;
+        }
+      }
+
+      const msgsRef = collection(db, "ephemeralChats", chatId, "messages");
+      await addDoc(msgsRef, {
+        fromUid: currentUser.uid,
+        toUid: otherUser.uid,
+        text: trimmed || null,
+        imageUrl: imageUrl || null,
+        createdAt: serverTimestamp()
+      });
+
+      pendingImageFile = null;
+      const fileInput = document.getElementById("imageInput");
+      if (fileInput) fileInput.value = "";
+    }
+
+    async function wipeUserChats(uid) {
+      const chatsRef = collection(db, "ephemeralChats");
+      const snap = await getDocs(chatsRef);
+      const deletions = [];
+      snap.forEach((chatDoc) => {
+        const data = chatDoc.data();
+        if (!data.participants || !Array.isArray(data.participants)) return;
+        if (data.participants.includes(uid)) {
+          deletions.push(deleteDoc(chatDoc.ref));
+        }
+      });
+      await Promise.all(deletions);
+    }
+
+    async function handleLogout() {
+      if (currentUser) {
+        try {
+          await wipeUserChats(currentUser.uid); // strict wipe [web:30]
+        } catch (e) {
+          console.error("Error wiping chats on logout", e);
+        }
+      }
+      sessionStorage.clear();
+      localStorage.removeItem("oodles_chat_state");
+      await signOut(auth);
+      window.location.href = "/index.html";
+    }
+
+    function attachUiHandlers() {
+      const form = document.getElementById("chatForm");
+      const input = document.getElementById("chatInput");
+      const imageInput = document.getElementById("imageInput");
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        await sendMessage(input.value);
+        input.value = "";
+      });
+
+      imageInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        pendingImageFile = file || null;
+      });
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          handleLogout();
+        });
+      }
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "/index.html";
+        return;
+      }
+      currentUser = user;
+
+      const otherUid = getParam("uid");
+      if (!otherUid) {
+        alert("No chat partner specified.");
+        window.location.href = "/dashboard.html";
+        return;
+      }
+
+      if (otherUid === currentUser.uid) {
+        alert("You cannot chat with yourself.");
+        window.location.href = "/dashboard.html";
+        return;
+      }
+
+      otherUser = await fetchUserByUid(otherUid);
+      if (!otherUser) {
+        alert("User not found.");
+        window.location.href = "/dashboard.html";
+        return;
+      }
+
+      renderHeader();
+      renderSystemNote();
+      attachUiHandlers();
+      await ensureChatDocument();
+    });
+
+    // As an extra safety net: clear messages when tab closes (best-effort)
+    window.addEventListener("beforeunload", async () => {
+      // Do not block navigation; just fire and forget
+      if (!currentUser) return;
+      try {
+        await wipeUserChats(currentUser.uid);
+      } catch (e) {
+        console.error("Error wiping on unload", e);
+      }
+    });
+  </script>
 </head>
 <body class="app-body">
   <header class="top-bar">
@@ -12,73 +505,49 @@
       <img src="logo-oodles-doodles.jpg" alt="Oodles & Doodles" class="logo-image">
     </div>
     <nav class="top-nav">
-      <a href="browse.html" class="nav-link">Browse</a>
-      <a href="matches.html" class="nav-link">Matches</a>
-      <a href="profile.html" class="nav-link">Profile</a>
-      <a href="settings.html" class="nav-link">Settings</a>
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="dashboard.html" class="nav-link">Browse</a>
+      <a href="dashboard.html" class="nav-link">Profile</a>
     </nav>
+    <div class="user-pill">
+      <a href="#" id="logoutBtn" style="color:#9aa3ff;text-decoration:none;">Logout</a>
+    </div>
   </header>
 
   <main class="page">
     <section class="chat-layout">
       <aside class="chat-sidebar">
-        <h2>Chats</h2>
-        <ul class="chat-list">
-          <li class="chat-list-item active">
-            <img src="https://via.placeholder.com/40" alt="Profile" class="avatar">
-            <div>
-              <div class="name">Liam, 32</div>
-              <div class="snippet">“You free this weekend?”</div>
-            </div>
-          </li>
-          <li class="chat-list-item">
-            <img src="https://via.placeholder.com/40" alt="Profile" class="avatar">
-            <div>
-              <div class="name">Connor, 27</div>
-              <div class="snippet">“Send me your best selfie 😏”</div>
-            </div>
-          </li>
-          <li class="chat-list-item">
-            <img src="https://via.placeholder.com/40" alt="Profile" class="avatar">
-            <div>
-              <div class="name">Alex, 30</div>
-              <div class="snippet">“Drag race finale watch party?”</div>
-            </div>
-          </li>
-        </ul>
+        <h2>Ephemeral chat</h2>
+        <p>No history. No favourites. Everything disappears when you log out.</p>
       </aside>
 
       <div class="chat-main">
         <header class="chat-header">
           <div>
-            <h1>Liam, 32</h1>
-            <p>Online · New Farm</p>
+            <h1 id="chatHeaderName">Loading…</h1>
+            <p id="chatHeaderMeta"></p>
           </div>
           <div class="chat-actions">
-            <button class="btn-ghost">Block</button>
-            <button class="btn-ghost">Report</button>
+            <button type="button">Block</button>
+            <button type="button">Report</button>
           </div>
         </header>
 
         <div class="chat-messages">
-          <div class="message received">
-            <p>Hey, love your pics 😏</p>
-            <span class="time">10:21 pm</span>
-          </div>
-          <div class="message sent">
-            <p>Haha thank you, you’re cute too.</p>
-            <span class="time">10:23 pm</span>
-          </div>
-          <div class="message received">
-            <p>What are you up to this weekend?</p>
-            <span class="time">10:24 pm</span>
-          </div>
+          <div id="systemNote" class="system-note"></div>
         </div>
 
-        <form class="chat-input">
-          <input type="text" placeholder="Say something flirty…" />
-          <button type="submit" class="btn-primary">Send</button>
-        </form>
+        <div class="chat-input-row">
+          <div class="chat-input-tools">
+            <span>Attach image:</span>
+            <input type="file" id="imageInput" accept="image/*">
+            <span>Ephemeral: media is deleted when you log out.</span>
+          </div>
+          <form class="chat-input" id="chatForm">
+            <input id="chatInput" type="text" placeholder="Say something flirty…" autocomplete="off" />
+            <button type="submit">Send</button>
+          </form>
+        </div>
       </div>
     </section>
   </main>
