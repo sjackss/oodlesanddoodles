@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><br>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><br>
-  <title>Oodles & Doodles – Gay Dating Without The Bullshit</title><br>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oodles & Doodles – Gay Dating Without The Bullshit</title>
   <style>
     * {
       margin: 0;
@@ -300,7 +300,6 @@
       <span class="logo-text">oodles&doodles</span>
     </div>
     <div class="nav-buttons">
-      <!-- Updated buttons: go to auth.html -->
       <button class="btn btn-secondary" onclick="window.location.href='auth.html'">Login</button>
       <button class="btn btn-primary" onclick="window.location.href='auth.html'">Create Account</button>
     </div>
@@ -357,7 +356,7 @@
   <!-- Pricing Section -->
   <section class="pricing" id="pricing">
     <h2>Simple, Flexible Pricing</h2>
-    <p style="text-align: center; color: #aaa; margin-bottom: 3rem;">Start free for 7 days. Choose your plan.</p>
+    <p style="text-align: center; color: #aaa; margin-bottom: 3rem;">Start free, then choose your plan.</p>
 
     <div class="pricing-grid">
       <!-- Weekly -->
@@ -370,7 +369,10 @@
           <li>See who likes you</li>
           <li>Mobile app access</li>
         </ul>
-        <button class="btn btn-subscribe" onclick="redirectToStripe('https://buy.stripe.com/test_14AaEQ2lE3DdfRK70p0RG03')">Choose Plan</button>
+        <button class="btn btn-subscribe"
+                onclick="redirectToStripe('https://buy.stripe.com/28EfZh2CuaTMdnacNT1ZS03')">
+          Choose Plan
+        </button>
       </div>
 
       <!-- Monthly (Featured) -->
@@ -378,7 +380,7 @@
         <span class="pricing-badge">Most Popular</span>
         <h3>Monthly</h3>
         <div class="price">$23.99<span class="price-period">/month</span></div>
-        <p style="color: #51cf66; font-size: 0.9rem; margin-bottom: 1rem;">Save 14% vs weekly</p>
+        <p style="color: #51cf66; font-size: 0.9rem; margin-bottom: 1rem;">Save vs weekly</p>
         <ul class="pricing-features">
           <li>Unlimited profiles</li>
           <li>Unlimited messages</li>
@@ -386,14 +388,17 @@
           <li>Mobile app access</li>
           <li>Priority support</li>
         </ul>
-        <button class="btn btn-subscribe" onclick="redirectToStripe('https://buy.stripe.com/test_6oU9AM4tM8Xx7leckJ0RG01')">Choose Plan</button>
+        <button class="btn btn-subscribe"
+                onclick="redirectToStripe('https://buy.stripe.com/eVq8wP0um0f80Ao4hn1ZS02')">
+          Choose Plan
+        </button>
       </div>
 
       <!-- Yearly -->
       <div class="pricing-card">
         <h3>Yearly</h3>
         <div class="price">$88.82<span class="price-period">/year</span></div>
-        <p style="color: #51cf66; font-size: 0.9rem; margin-bottom: 1rem;">Save even more</p>
+        <p style="color: #51cf66; font-size: 0.9rem; margin-bottom: 1rem;">Best value</p>
         <ul class="pricing-features">
           <li>Unlimited profiles</li>
           <li>Unlimited messages</li>
@@ -402,25 +407,30 @@
           <li>Priority support</li>
           <li>Profile boost monthly</li>
         </ul>
-        <button class="btn btn-subscribe" onclick="redirectToStripe('https://buy.stripe.com/test_3cI7sE5xQ2z98pi5Wl0RG02')">Choose Plan</button>
+        <button class="btn btn-subscribe"
+                onclick="redirectToStripe('https://buy.stripe.com/9B66oH1yq3rk5UIg051ZS01')">
+          Choose Plan
+        </button>
       </div>
     </div>
 
     <div style="text-align: center; margin-top: 3rem; padding: 2rem; background: rgba(255, 0, 110, 0.1); border-radius: 12px; border: 1px solid rgba(255, 0, 110, 0.2);">
-      <p>💰 <strong>Limited Offer:</strong> All new members get <strong>7 days free</strong> to try premium features. No credit card required to start.</p>
+      <p>💰 <strong>Limited Offer:</strong> New members get free access during the trial period on any plan.</p>
     </div>
   </section>
 
   <!-- Footer -->
   <footer>
-    <p>© <span id="year"></span> Oodles & Doodles. All rights reserved. | 18+ only | <a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="mailto:dannonjabbor@gmail.com">Contact</a></p>
+    <p>© <span id="year"></span> Oodles & Doodles. All rights reserved. | 18+ only |
+      <a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="mailto:dannonjabbor@gmail.com">Contact</a>
+    </p>
   </footer>
 
-  <!-- Firebase + Analytics (unchanged logic) -->
+  <!-- Firebase + Analytics + Stripe redirect -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
     import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBVqDVruufVu5AvXBitSoukogADaopR-7A",
@@ -450,8 +460,8 @@
         window.location.href = 'auth.html';
         return;
       }
-      const tier = checkoutUrl.includes('14AaEQ2') ? 'weekly'
-        : checkoutUrl.includes('6oU9AM4') ? 'monthly'
+      const tier = checkoutUrl.includes('28EfZh2CuaTMdnacNT1ZS03') ? 'weekly'
+        : checkoutUrl.includes('eVq8wP0um0f80Ao4hn1ZS02') ? 'monthly'
         : 'yearly';
       logEvent(analytics, 'upgrade_click', { tier });
       window.location.href = checkoutUrl;
