@@ -126,6 +126,38 @@
       font-size: 12px;
     }
 
+    /* Profile avatar */
+    .profile-avatar-wrapper {
+      margin: 12px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .profile-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #ff6ad5, #7873f5);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .profile-avatar-controls {
+      font-size: 12px;
+      color: #9aa3ff;
+    }
+    .profile-avatar-controls input[type="file"] {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
     /* Sections */
     .section {
       display: none;
@@ -158,7 +190,8 @@
       margin-bottom: 4px;
     }
     form input,
-    form textarea {
+    form textarea,
+    form select {
       width: 100%;
       background: #050818;
       border: 1px solid #272b4a;
@@ -215,6 +248,12 @@
       align-items: center;
       justify-content: center;
       font-size: 20px;
+      overflow: hidden;
+    }
+    .profile-item-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     .profile-item-info {
       flex: 1;
@@ -233,6 +272,11 @@
     .profile-item-bio {
       font-size: 12px;
       color: #d7e0ff;
+      margin-bottom: 6px;
+    }
+    .profile-item-preferences {
+      font-size: 11px;
+      color: #9aa3ff;
       margin-bottom: 6px;
     }
     .profile-item-actions {
@@ -279,10 +323,31 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getAuth, signOut, onAuthStateChanged, updatePassword, updateEmail } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import {
-      getFirestore, collection, query, where, getDocs, addDoc, setDoc, doc, serverTimestamp
+      getAuth,
+      signOut,
+      onAuthStateChanged,
+      updatePassword,
+      updateEmail
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      getDocs,
+      addDoc,
+      setDoc,
+      doc,
+      serverTimestamp,
+      deleteDoc
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import {
+      getStorage,
+      ref as storageRef,
+      uploadBytes,
+      getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";  // profile pics + chat media [web:9]
 
     const firebaseConfig = {
       apiKey: "AIzaSyBVqDVruufVu5AvXBitSoukogADaopR-7A",
@@ -296,6 +361,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    const storage = getStorage(app);
 
     // TODO: replace with your real Stripe Checkout URL
     const STRIPE_CHECKOUT_URL = "https://buy.stripe.com/your_checkout_link_here";
@@ -306,7 +372,7 @@
 
     function isTrialActive(data) {
       if (!data) return false;
-      if (data.isPaid) return true; // paid overrides trial
+      if (data.isPaid) return true;
       if (!data.trialEnd || !data.trialEnd.seconds) return true;
       const trialEnd = new Date(data.trialEnd.seconds * 1000);
       const now = new Date();
@@ -329,11 +395,9 @@
       currentPlanEl.textContent = tier;
       planStatusEl.textContent = isPaid ? "Active" : "Trial";
 
-      // Trial logic
       if (!isPaid) {
         const active = isTrialActive(currentUserData);
         if (!active) {
-          // Trial ended and not paid
           trialBanner.style.display = "none";
           subOverlay.style.display = "block";
           planExpiryEl.textContent = "Expired";
@@ -341,7 +405,6 @@
           return;
         }
 
-        // Trial active
         subOverlay.style.display = "none";
         trialBanner.style.display = "flex";
 
@@ -353,13 +416,11 @@
           trialDaysEl.textContent = daysLeft;
           planExpiryEl.textContent = daysLeft + " days";
         } else {
-          // fallback: 60 days
           trialDaysEl.textContent = "60";
           planExpiryEl.textContent = "60 days";
         }
         nextBillingEl.textContent = "TBD";
       } else {
-        // Paid subscription
         subOverlay.style.display = "none";
         trialBanner.style.display = "none";
         planExpiryEl.textContent = currentUserData.planExpiryText || "Auto-renews";
@@ -377,9 +438,16 @@
           createdAt: serverTimestamp(),
           subscriptionTier: "Free Trial",
           isPaid: false,
-          trialEnd: null, // you can set this from backend/Cloud Function later
+          trialEnd: null,
           location: "",
-          distanceKm: null
+          distanceKm: null,
+          // profile fields
+          profileName: "",
+          age: null,
+          bio: "",
+          photoURL: "",
+          facePreference: "no_pref",
+          bodyPreference: "no_pref"
         });
         currentUserDocId = docRef.id;
         currentUserData = {
@@ -389,7 +457,13 @@
           isPaid: false,
           trialEnd: null,
           location: "",
-          distanceKm: null
+          distanceKm: null,
+          profileName: "",
+          age: null,
+          bio: "",
+          photoURL: "",
+          facePreference: "no_pref",
+          bodyPreference: "no_pref"
         };
       } else {
         const docSnap = querySnapshot.docs[0];
@@ -398,27 +472,61 @@
       }
     }
 
+    function setAvatarPreview(url) {
+      const avatarImg = document.getElementById("profileAvatarImg");
+      const avatarFallback = document.getElementById("profileAvatarFallback");
+      if (url) {
+        avatarImg.src = url;
+        avatarImg.style.display = "block";
+        avatarFallback.style.display = "none";
+      } else {
+        avatarImg.src = "";
+        avatarImg.style.display = "none";
+        avatarFallback.style.display = "flex";
+      }
+    }
+
     async function loadUserDataIntoUI() {
-      if (!currentUserData) return;
+      if (!currentUserData || !currentUser) return;
 
       const sidebarNameEl = document.getElementById("sidebarName");
       const sidebarEmailEl = document.getElementById("sidebarEmail");
+      const headerUserEmailEl = document.getElementById("headerUserEmail");
       const profileNameEl = document.getElementById("profileName");
       const profileAgeEl = document.getElementById("profileAge");
       const profileBioEl = document.getElementById("profileBio");
       const profileLocationEl = document.getElementById("profileLocation");
       const settingsEmailEl = document.getElementById("settingsEmail");
+      const facePrefEl = document.getElementById("facePreference");
+      const bodyPrefEl = document.getElementById("bodyPreference");
 
       const profileName = currentUserData.profileName || "Create Profile";
       if (sidebarNameEl) sidebarNameEl.textContent = profileName;
-      if (sidebarEmailEl) sidebarEmailEl.textContent = currentUserData.email || currentUser.email || "";
+      const email = currentUserData.email || currentUser.email || "";
+      if (sidebarEmailEl) sidebarEmailEl.textContent = email;
+      if (headerUserEmailEl) headerUserEmailEl.textContent = email;
       if (profileNameEl) profileNameEl.value = currentUserData.profileName || "";
       if (profileAgeEl) profileAgeEl.value = currentUserData.age || "";
       if (profileBioEl) profileBioEl.value = currentUserData.bio || "";
       if (profileLocationEl) profileLocationEl.value = currentUserData.location || "";
-      if (settingsEmailEl) settingsEmailEl.value = currentUserData.email || currentUser.email || "";
+      if (settingsEmailEl) settingsEmailEl.value = email;
+      if (facePrefEl) facePrefEl.value = currentUserData.facePreference || "no_pref";
+      if (bodyPrefEl) bodyPrefEl.value = currentUserData.bodyPreference || "no_pref";
+
+      setAvatarPreview(currentUserData.photoURL || "");
 
       updateSubscriptionUI();
+    }
+
+    // Simple mapping to show preferences on cards
+    function formatPreferences(user) {
+      const face = user.facePreference || "no_pref";
+      const body = user.bodyPreference || "no_pref";
+      const parts = [];
+      if (face === "faces_only") parts.push("likes faces");
+      if (face === "no_faces") parts.push("no face pics");
+      if (body && body !== "no_pref") parts.push("body: " + body);
+      return parts.join(" · ");
     }
 
     async function loadProfilesNearby() {
@@ -426,7 +534,6 @@
       const browseGrid = document.getElementById("browseGrid");
       if (!browseGrid) return;
 
-      // If subscription inactive, don't load
       if (!isTrialActive(currentUserData) && !currentUserData.isPaid) {
         browseGrid.innerHTML = "<p style='color:#aaa;'>Renew your subscription to browse profiles.</p>";
         return;
@@ -434,10 +541,6 @@
 
       browseGrid.innerHTML = "<p style='color:#aaa;'>Loading profiles…</p>";
 
-      // Simple example: filter all users != current user, limit 500
-      // For real distance/location filtering you would normally:
-      // - store city/coordinates,
-      // - query by region, then filter client-side or via backend.
       const qAll = query(collection(db, "users"), where("uid", "!=", currentUser.uid));
       const snap = await getDocs(qAll);
 
@@ -449,7 +552,6 @@
       const items = [];
       snap.forEach((docSnap) => {
         const data = docSnap.data();
-        // Basic subscription check per user: only show active/trial users
         const theirActive = data.isPaid || isTrialActive(data);
         if (!theirActive) return;
 
@@ -459,7 +561,6 @@
         });
       });
 
-      // Limit to 500 on screen
       const limited = items.slice(0, 500);
 
       if (limited.length === 0) {
@@ -473,16 +574,22 @@
         const safeAge = user.age || "?";
         const safeLocation = user.location || "Location not set";
         const safeBio = user.bio || "No bio yet";
+        const prefsText = formatPreferences(user);
+        const avatarUrl = user.photoURL || "";
 
         const div = document.createElement("div");
         div.className = "profile-item";
-        div.onclick = () => viewProfile(user.id);
+        div.onclick = () => viewProfile(user.uid);
+
         div.innerHTML = `
-          <div class="profile-item-image">😊</div>
+          <div class="profile-item-image">
+            ${avatarUrl ? `<img src="${avatarUrl}" alt="${safeName}" />` : "😊"}
+          </div>
           <div class="profile-item-info">
             <div class="profile-item-name">${safeName}, ${safeAge}</div>
             <div class="profile-item-age">${safeLocation}</div>
             <div class="profile-item-bio">${safeBio}</div>
+            ${prefsText ? `<div class="profile-item-preferences">${prefsText}</div>` : ""}
             <div class="profile-item-actions">
               <button class="btn-like" type="button">❤️ Like</button>
               <button class="btn-message" type="button">💬 Chat</button>
@@ -491,12 +598,35 @@
         `;
         const likeBtn = div.querySelector(".btn-like");
         const msgBtn = div.querySelector(".btn-message");
-        likeBtn.addEventListener("click", (e) => likeProfile(e));
-        msgBtn.addEventListener("click", (e) => messageProfile(e));
+        likeBtn.addEventListener("click", (e) => likeProfile(e, user.uid));
+        msgBtn.addEventListener("click", (e) => messageProfile(e, user.uid));
         browseGrid.appendChild(div);
       });
     }
 
+    // ===== Ephemeral chat helpers (Firestore only) =====
+    // chatId is deterministic per pair (so chat.html can reuse it)
+    function getChatIdForPair(uid1, uid2) {
+      return [uid1, uid2].sort().join("_");
+    }
+
+    async function wipeUserChats(uid) {
+      // Strict wipe: delete any ephemeralChats where this user participates
+      const chatsRef = collection(db, "ephemeralChats");
+      const q = query(chatsRef);
+      const snap = await getDocs(q);
+      const deletions = [];
+      snap.forEach((chatDoc) => {
+        const data = chatDoc.data();
+        if (!data.participants || !Array.isArray(data.participants)) return;
+        if (data.participants.includes(uid)) {
+          deletions.push(deleteDoc(chatDoc.ref));
+        }
+      });
+      await Promise.all(deletions);
+    }
+
+    // ===== Auth state =====
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.href = "/index.html";
@@ -509,7 +639,6 @@
     });
 
     // ===== UI handlers attached to window =====
-
     window.showSection = (section, e) => {
       if (e) e.preventDefault();
       document.querySelectorAll(".section").forEach((s) => s.classList.remove("active"));
@@ -521,6 +650,42 @@
       if (navLink) navLink.classList.add("active");
     };
 
+    // Profile photo upload
+    async function handleProfilePhotoUpload(file) {
+      if (!file || !currentUser) return;
+      const maxSizeBytes = 5 * 1024 * 1024;
+      if (file.size > maxSizeBytes) {
+        alert("Please upload an image smaller than 5 MB.");
+        return;
+      }
+      const allowed = ["image/jpeg", "image/png", "image/webp"];
+      if (!allowed.includes(file.type)) {
+        alert("Please upload a JPG, PNG, or WEBP image.");
+        return;
+      }
+
+      try {
+        const path = `profilePics/${currentUser.uid}`;
+        const refObj = storageRef(storage, path);
+        await uploadBytes(refObj, file);
+        const url = await getDownloadURL(refObj);
+        await setDoc(
+          doc(db, "users", currentUserDocId),
+          {
+            photoURL: url,
+            updatedAt: serverTimestamp()
+          },
+          { merge: true }
+        );
+        currentUserData = { ...currentUserData, photoURL: url };
+        setAvatarPreview(url);
+        await loadProfilesNearby();
+      } catch (err) {
+        console.error(err);
+        alert("There was an error uploading your photo. Try again.");
+      }
+    }
+
     window.saveProfile = async (e) => {
       e.preventDefault();
       if (!currentUser) return;
@@ -529,6 +694,8 @@
       const age = document.getElementById("profileAge").value;
       const bio = document.getElementById("profileBio").value.trim();
       const location = document.getElementById("profileLocation").value.trim();
+      const facePreference = document.getElementById("facePreference").value;
+      const bodyPreference = document.getElementById("bodyPreference").value;
 
       if (!currentUserDocId) {
         const docRef = await addDoc(collection(db, "users"), {
@@ -538,6 +705,8 @@
           age,
           bio,
           location,
+          facePreference,
+          bodyPreference,
           updatedAt: serverTimestamp()
         });
         currentUserDocId = docRef.id;
@@ -551,6 +720,8 @@
             age,
             bio,
             location,
+            facePreference,
+            bodyPreference,
             updatedAt: serverTimestamp()
           },
           { merge: true }
@@ -562,7 +733,9 @@
         profileName,
         age,
         bio,
-        location
+        location,
+        facePreference,
+        bodyPreference
       };
       await loadUserDataIntoUI();
       alert("Profile saved!");
@@ -616,6 +789,16 @@
     };
 
     window.logout = async () => {
+      if (currentUser) {
+        try {
+          // strict: wipe ephemeral chats for this user before sign-out
+          await wipeUserChats(currentUser.uid);
+        } catch (e) {
+          console.error("Error wiping chats on logout", e);
+        }
+      }
+      sessionStorage.clear();
+      localStorage.removeItem("oodles_chat_state");
       await signOut(auth);
       window.location.href = "/index.html";
     };
@@ -624,18 +807,21 @@
       window.location.href = STRIPE_CHECKOUT_URL;
     };
 
-    window.likeProfile = (e) => {
+    window.likeProfile = (e, otherUid) => {
       e.stopPropagation();
+      // You can extend this to save likes in Firestore for real matches.
       alert("Profile liked! 💖");
     };
 
-    window.messageProfile = (e) => {
+    window.messageProfile = (e, otherUid) => {
       e.stopPropagation();
-      alert("Chat coming soon! 💬");
+      if (!currentUser) return;
+      const chatUrl = `/chat.html?uid=${encodeURIComponent(otherUid)}`;
+      window.location.href = chatUrl;
     };
 
-    window.viewProfile = (profileId) => {
-      alert("Profile details loading...");
+    window.viewProfile = (otherUid) => {
+      alert("Profile details coming soon.");
     };
 
     window.deleteAccount = () => {
@@ -643,6 +829,19 @@
         alert("Account deletion requested. We'll process this within 24 hours.");
       }
     };
+
+    // Wire up photo input once DOM is ready
+    window.addEventListener("DOMContentLoaded", () => {
+      const fileInput = document.getElementById("profilePhotoInput");
+      if (fileInput) {
+        fileInput.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            handleProfilePhotoUpload(file);
+          }
+        });
+      }
+    });
   </script>
 </head>
 <body>
@@ -662,11 +861,22 @@
       <div id="sidebarName">Create Profile</div>
       <div id="sidebarEmail"></div>
 
+      <div class="profile-avatar-wrapper">
+        <div class="profile-avatar">
+          <div id="profileAvatarFallback">😊</div>
+          <img id="profileAvatarImg" alt="Profile photo" style="display:none;" />
+        </div>
+        <div class="profile-avatar-controls">
+          <div>Profile photo</div>
+          <input type="file" id="profilePhotoInput" accept="image/*" />
+          <div>Face/body pics allowed but chats are ephemeral and private.</div>
+        </div>
+      </div>
+
       <div class="plan-pill">
         Plan: <span id="currentPlan">Free Trial</span> ·
         <span id="planStatus">Active</span>
       </div>
-
       <div class="plan-meta">
         Expiry: <span id="planExpiry">60 days</span><br />
         Next billing: <span id="nextBilling">TBD</span>
@@ -707,6 +917,22 @@
 
             <label for="profileBio">Bio</label>
             <textarea id="profileBio" placeholder="Tell others a little about you…"></textarea>
+
+            <label for="facePreference">Face pics preference</label>
+            <select id="facePreference">
+              <option value="no_pref">No preference</option>
+              <option value="faces_only">Only show with face</option>
+              <option value="no_faces">No face pics</option>
+            </select>
+
+            <label for="bodyPreference">Body preference</label>
+            <select id="bodyPreference">
+              <option value="no_pref">No preference</option>
+              <option value="slim">Slim</option>
+              <option value="average">Average</option>
+              <option value="muscular">Muscular</option>
+              <option value="bigger">Bigger</option>
+            </select>
 
             <button type="submit">Save profile</button>
           </form>
