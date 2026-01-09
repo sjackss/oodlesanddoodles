@@ -1,254 +1,749 @@
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-  import { getAuth, signOut, onAuthStateChanged, updatePassword, updateEmail } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-  import { 
-    getFirestore, collection, query, where, getDocs, addDoc, setDoc, doc, serverTimestamp 
-  } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Oodles & Doodles Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBVqDVruufVu5AvXBitSoukogADaopR-7A",
-    authDomain: "oodlesanddoodles-c9202.firebaseapp.com",
-    projectId: "oodlesanddoodles-c9202",
-    storageBucket: "oodlesanddoodles-c9202.firebasestorage.app",
-    messagingSenderId: "351292337624",
-    appId: "1:351292337624:web:5ab5d5bf37b800d0da96ad"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  let currentUser = null;
-  let currentUserDocId = null;
-
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      window.location.href = '/index.html';
-      return;
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #050818;
+      color: #f5f5f5;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: #0b1024;
+      border-bottom: 1px solid #272b4a;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header .logo {
+      font-weight: 700;
+      font-size: 18px;
+    }
+    header nav a {
+      color: #b7c0ff;
+      margin: 0 8px;
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 14px;
+    }
+    header nav a.active {
+      background: linear-gradient(120deg, #ff6ad5, #7873f5);
+      color: #050818;
+      font-weight: 600;
+    }
+    header .user-pill {
+      font-size: 13px;
+      color: #9aa3ff;
     }
 
-    currentUser = user;
-    document.getElementById('sidebarEmail').textContent = user.email || '';
-
-    await loadUserData(user.uid);
-    await loadProfiles();
-  });
-
-  async function loadUserData(uid) {
-    const q = query(collection(db, "users"), where("uid", "==", uid));
-    const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
-      // No user doc yet – set defaults and create a shell doc
-      const docRef = await addDoc(collection(db, "users"), {
-        uid,
-        email: currentUser.email || '',
-        createdAt: serverTimestamp(),
-        subscriptionTier: 'Free Trial',
-        isPaid: false,
-        trialEnd: null
-      });
-      currentUserDocId = docRef.id;
-
-      document.getElementById('sidebarName').textContent = 'Create Profile';
-      document.getElementById('settingsEmail').value = currentUser.email || '';
-      document.getElementById('currentPlan').textContent = 'Free Trial';
-      document.getElementById('planStatus').textContent = 'Active';
-      document.getElementById('planExpiry').textContent = '60 days';
-      document.getElementById('nextBilling').textContent = 'TBD';
-      document.getElementById('trialBanner').style.display = 'flex';
-      return;
+    main {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 20px;
+      padding: 16px 20px 40px;
+    }
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
     }
 
-    querySnapshot.forEach((docSnap) => {
-      currentUserDocId = docSnap.id;
-      const data = docSnap.data();
+    /* Sidebar */
+    #sidebar {
+      background: #0b1024;
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid #272b4a;
+    }
+    #sidebarName {
+      font-weight: 600;
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+    #sidebarEmail {
+      font-size: 13px;
+      color: #9aa3ff;
+      margin-bottom: 12px;
+      word-break: break-all;
+    }
+    .plan-pill {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #151a33;
+      color: #d7e0ff;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .plan-meta {
+      font-size: 12px;
+      color: #9aa3ff;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    #trialBanner {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(255, 106, 213, 0.08);
+      border: 1px dashed rgba(255, 106, 213, 0.6);
+      font-size: 12px;
+      display: none;
+    }
+    #trialBanner strong {
+      color: #ff9ee5;
+    }
+    .sidebar-actions button {
+      width: 100%;
+      margin-top: 8px;
+      border-radius: 999px;
+      border: none;
+      padding: 8px 10px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn-upgrade {
+      background: linear-gradient(120deg, #ff6ad5, #7873f5);
+      color: #050818;
+      font-weight: 600;
+    }
+    .btn-logout {
+      background: #161a33;
+      color: #d7e0ff;
+    }
+    .btn-danger {
+      background: #3b1119;
+      color: #ff9ab5;
+      font-size: 12px;
+    }
 
-      document.getElementById('sidebarName').textContent = data.profileName || 'Create Profile';
-      document.getElementById('profileName').value = data.profileName || '';
-      document.getElementById('profileAge').value = data.age || '';
-      document.getElementById('profileBio').value = data.bio || '';
-      document.getElementById('profileLocation').value = data.location || '';
-      document.getElementById('settingsEmail').value = data.email || currentUser.email || '';
+    /* Sections */
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
 
-      const tier = data.subscriptionTier || 'Free Trial';
-      document.getElementById('currentPlan').textContent = tier;
-      document.getElementById('planStatus').textContent = data.isPaid ? 'Active' : 'Trial';
+    .card {
+      background: #0b1024;
+      border-radius: 16px;
+      border: 1px solid #272b4a;
+      padding: 18px 16px 20px;
+      margin-bottom: 16px;
+    }
+    .card h2 {
+      font-size: 18px;
+      margin: 0 0 8px;
+    }
+    .card p.sub {
+      font-size: 13px;
+      color: #9aa3ff;
+      margin: 0 0 14px;
+    }
 
-      const trialBanner = document.getElementById('trialBanner');
-      const trialDaysEl = document.getElementById('trialDays');
-      const planExpiryEl = document.getElementById('planExpiry');
+    /* Forms */
+    form label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+    form input,
+    form textarea {
+      width: 100%;
+      background: #050818;
+      border: 1px solid #272b4a;
+      border-radius: 10px;
+      color: #f5f5f5;
+      padding: 8px 10px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    form textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    form button[type="submit"] {
+      margin-top: 4px;
+      border-radius: 999px;
+      border: none;
+      padding: 8px 14px;
+      font-size: 14px;
+      background: linear-gradient(120deg, #ff6ad5, #7873f5);
+      color: #050818;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
-      if (!data.isPaid) {
-        trialBanner.style.display = 'flex';
+    .settings-row {
+      font-size: 13px;
+      color: #9aa3ff;
+      margin-top: 6px;
+    }
 
-        if (data.trialEnd && data.trialEnd.seconds) {
-          const trialEnd = new Date(data.trialEnd.seconds * 1000);
+    /* Browse grid */
+    #browseGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .profile-item {
+      background: #050818;
+      border-radius: 14px;
+      border: 1px solid #272b4a;
+      padding: 10px 10px 12px;
+      cursor: pointer;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .profile-item-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #ff6ad5, #7873f5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .profile-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .profile-item-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+    .profile-item-age {
+      font-size: 12px;
+      color: #9aa3ff;
+      margin-bottom: 4px;
+    }
+    .profile-item-bio {
+      font-size: 12px;
+      color: #d7e0ff;
+      margin-bottom: 6px;
+    }
+    .profile-item-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .profile-item-actions button {
+      border-radius: 999px;
+      border: none;
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .btn-like {
+      background: rgba(255, 106, 213, 0.16);
+      color: #ffb0e6;
+    }
+    .btn-message {
+      background: rgba(120, 115, 245, 0.18);
+      color: #c1c4ff;
+    }
+
+    .subscription-overlay {
+      display: none;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px dashed rgba(255, 106, 213, 0.7);
+      background: rgba(5, 8, 24, 0.92);
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+    .subscription-overlay button {
+      margin-top: 10px;
+      border-radius: 999px;
+      border: none;
+      padding: 8px 14px;
+      font-size: 14px;
+      background: linear-gradient(120deg, #ff6ad5, #7873f5);
+      color: #050818;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged, updatePassword, updateEmail } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      getFirestore, collection, query, where, getDocs, addDoc, setDoc, doc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBVqDVruufVu5AvXBitSoukogADaopR-7A",
+      authDomain: "oodlesanddoodles-c9202.firebaseapp.com",
+      projectId: "oodlesanddoodles-c9202",
+      storageBucket: "oodlesanddoodles-c9202.firebasestorage.app",
+      messagingSenderId: "351292337624",
+      appId: "1:351292337624:web:5ab5d5bf37b800d0da96ad"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // TODO: replace with your real Stripe Checkout URL
+    const STRIPE_CHECKOUT_URL = "https://buy.stripe.com/your_checkout_link_here";
+
+    let currentUser = null;
+    let currentUserDocId = null;
+    let currentUserData = null;
+
+    function isTrialActive(data) {
+      if (!data) return false;
+      if (data.isPaid) return true; // paid overrides trial
+      if (!data.trialEnd || !data.trialEnd.seconds) return true;
+      const trialEnd = new Date(data.trialEnd.seconds * 1000);
+      const now = new Date();
+      return trialEnd.getTime() >= now.getTime();
+    }
+
+    function updateSubscriptionUI() {
+      const subOverlay = document.getElementById("subscriptionOverlay");
+      const trialBanner = document.getElementById("trialBanner");
+      const trialDaysEl = document.getElementById("trialDays");
+      const currentPlanEl = document.getElementById("currentPlan");
+      const planStatusEl = document.getElementById("planStatus");
+      const planExpiryEl = document.getElementById("planExpiry");
+      const nextBillingEl = document.getElementById("nextBilling");
+
+      if (!currentUserData) return;
+
+      const tier = currentUserData.subscriptionTier || "Free Trial";
+      const isPaid = !!currentUserData.isPaid;
+      currentPlanEl.textContent = tier;
+      planStatusEl.textContent = isPaid ? "Active" : "Trial";
+
+      // Trial logic
+      if (!isPaid) {
+        const active = isTrialActive(currentUserData);
+        if (!active) {
+          // Trial ended and not paid
+          trialBanner.style.display = "none";
+          subOverlay.style.display = "block";
+          planExpiryEl.textContent = "Expired";
+          nextBillingEl.textContent = "Renew to continue";
+          return;
+        }
+
+        // Trial active
+        subOverlay.style.display = "none";
+        trialBanner.style.display = "flex";
+
+        if (currentUserData.trialEnd && currentUserData.trialEnd.seconds) {
+          const trialEnd = new Date(currentUserData.trialEnd.seconds * 1000);
           const today = new Date();
           let daysLeft = Math.ceil((trialEnd - today) / (1000 * 60 * 60 * 24));
           if (daysLeft < 0) daysLeft = 0;
           trialDaysEl.textContent = daysLeft;
-          planExpiryEl.textContent = daysLeft + ' days';
+          planExpiryEl.textContent = daysLeft + " days";
         } else {
-          // Fallback if no trialEnd set
-          trialDaysEl.textContent = '60';
-          planExpiryEl.textContent = '60 days';
+          // fallback: 60 days
+          trialDaysEl.textContent = "60";
+          planExpiryEl.textContent = "60 days";
         }
+        nextBillingEl.textContent = "TBD";
       } else {
-        trialBanner.style.display = 'none';
+        // Paid subscription
+        subOverlay.style.display = "none";
+        trialBanner.style.display = "none";
+        planExpiryEl.textContent = currentUserData.planExpiryText || "Auto-renews";
+        nextBillingEl.textContent = currentUserData.nextBillingText || "Next billing per Stripe";
       }
-    });
-  }
-
-  async function loadProfiles() {
-    if (!currentUser) return;
-
-    const q = query(collection(db, "users"), where("uid", "!=", currentUser.uid));
-    const querySnapshot = await getDocs(q);
-
-    const browseGrid = document.getElementById('browseGrid');
-    browseGrid.innerHTML = '';
-
-    if (querySnapshot.empty) {
-      browseGrid.innerHTML = '<p style="color: #aaa;">No profiles available yet. Check back soon!</p>';
-      return;
     }
 
-    querySnapshot.forEach((docSnap) => {
-      const data = docSnap.data();
-      const safeName = data.profileName || 'Anonymous';
-      const safeAge = data.age || '?';
-      const safeLocation = data.location || 'Location not set';
-      const safeBio = data.bio || 'No bio yet';
+    async function ensureUserDoc(uid, email) {
+      const q = query(collection(db, "users"), where("uid", "==", uid));
+      const querySnapshot = await getDocs(q);
+      if (querySnapshot.empty) {
+        const docRef = await addDoc(collection(db, "users"), {
+          uid,
+          email: email || "",
+          createdAt: serverTimestamp(),
+          subscriptionTier: "Free Trial",
+          isPaid: false,
+          trialEnd: null, // you can set this from backend/Cloud Function later
+          location: "",
+          distanceKm: null
+        });
+        currentUserDocId = docRef.id;
+        currentUserData = {
+          uid,
+          email: email || "",
+          subscriptionTier: "Free Trial",
+          isPaid: false,
+          trialEnd: null,
+          location: "",
+          distanceKm: null
+        };
+      } else {
+        const docSnap = querySnapshot.docs[0];
+        currentUserDocId = docSnap.id;
+        currentUserData = docSnap.data();
+      }
+    }
 
-      const profileHTML = `
-        <div class="profile-item" onclick="viewProfile('${docSnap.id}')">
+    async function loadUserDataIntoUI() {
+      if (!currentUserData) return;
+
+      const sidebarNameEl = document.getElementById("sidebarName");
+      const sidebarEmailEl = document.getElementById("sidebarEmail");
+      const profileNameEl = document.getElementById("profileName");
+      const profileAgeEl = document.getElementById("profileAge");
+      const profileBioEl = document.getElementById("profileBio");
+      const profileLocationEl = document.getElementById("profileLocation");
+      const settingsEmailEl = document.getElementById("settingsEmail");
+
+      const profileName = currentUserData.profileName || "Create Profile";
+      if (sidebarNameEl) sidebarNameEl.textContent = profileName;
+      if (sidebarEmailEl) sidebarEmailEl.textContent = currentUserData.email || currentUser.email || "";
+      if (profileNameEl) profileNameEl.value = currentUserData.profileName || "";
+      if (profileAgeEl) profileAgeEl.value = currentUserData.age || "";
+      if (profileBioEl) profileBioEl.value = currentUserData.bio || "";
+      if (profileLocationEl) profileLocationEl.value = currentUserData.location || "";
+      if (settingsEmailEl) settingsEmailEl.value = currentUserData.email || currentUser.email || "";
+
+      updateSubscriptionUI();
+    }
+
+    async function loadProfilesNearby() {
+      if (!currentUser || !currentUserData) return;
+      const browseGrid = document.getElementById("browseGrid");
+      if (!browseGrid) return;
+
+      // If subscription inactive, don't load
+      if (!isTrialActive(currentUserData) && !currentUserData.isPaid) {
+        browseGrid.innerHTML = "<p style='color:#aaa;'>Renew your subscription to browse profiles.</p>";
+        return;
+      }
+
+      browseGrid.innerHTML = "<p style='color:#aaa;'>Loading profiles…</p>";
+
+      // Simple example: filter all users != current user, limit 500
+      // For real distance/location filtering you would normally:
+      // - store city/coordinates,
+      // - query by region, then filter client-side or via backend.
+      const qAll = query(collection(db, "users"), where("uid", "!=", currentUser.uid));
+      const snap = await getDocs(qAll);
+
+      if (snap.empty) {
+        browseGrid.innerHTML = "<p style='color:#aaa;'>No profiles available yet. Check back soon!</p>";
+        return;
+      }
+
+      const items = [];
+      snap.forEach((docSnap) => {
+        const data = docSnap.data();
+        // Basic subscription check per user: only show active/trial users
+        const theirActive = data.isPaid || isTrialActive(data);
+        if (!theirActive) return;
+
+        items.push({
+          id: docSnap.id,
+          ...data
+        });
+      });
+
+      // Limit to 500 on screen
+      const limited = items.slice(0, 500);
+
+      if (limited.length === 0) {
+        browseGrid.innerHTML = "<p style='color:#aaa;'>No active profiles in your area yet.</p>";
+        return;
+      }
+
+      browseGrid.innerHTML = "";
+      limited.forEach((user) => {
+        const safeName = user.profileName || "Anonymous";
+        const safeAge = user.age || "?";
+        const safeLocation = user.location || "Location not set";
+        const safeBio = user.bio || "No bio yet";
+
+        const div = document.createElement("div");
+        div.className = "profile-item";
+        div.onclick = () => viewProfile(user.id);
+        div.innerHTML = `
           <div class="profile-item-image">😊</div>
           <div class="profile-item-info">
             <div class="profile-item-name">${safeName}, ${safeAge}</div>
             <div class="profile-item-age">${safeLocation}</div>
             <div class="profile-item-bio">${safeBio}</div>
             <div class="profile-item-actions">
-              <button class="btn-like" onclick="likeProfile(event)">❤️ Like</button>
-              <button class="btn-message" onclick="messageProfile(event)">💬 Chat</button>
+              <button class="btn-like" type="button">❤️ Like</button>
+              <button class="btn-message" type="button">💬 Chat</button>
             </div>
           </div>
-        </div>
-      `;
-      browseGrid.innerHTML += profileHTML;
-    });
-  }
-
-  // ===== UI handlers attached to window =====
-
-  window.showSection = (section, e) => {
-    if (e) e.preventDefault();
-
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById(section + '-section').classList.add('active');
-
-    document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-    if (e && e.currentTarget) {
-      e.currentTarget.classList.add('active');
-    }
-  };
-
-  window.saveProfile = async (e) => {
-    e.preventDefault();
-    if (!currentUser) return;
-
-    const profileName = document.getElementById('profileName').value.trim();
-    const age = document.getElementById('profileAge').value;
-    const bio = document.getElementById('profileBio').value.trim();
-    const location = document.getElementById('profileLocation').value.trim();
-
-    if (!currentUserDocId) {
-      // Create user doc if missing
-      const docRef = await addDoc(collection(db, "users"), {
-        uid: currentUser.uid,
-        email: currentUser.email || '',
-        profileName,
-        age,
-        bio,
-        location,
-        updatedAt: serverTimestamp()
+        `;
+        const likeBtn = div.querySelector(".btn-like");
+        const msgBtn = div.querySelector(".btn-message");
+        likeBtn.addEventListener("click", (e) => likeProfile(e));
+        msgBtn.addEventListener("click", (e) => messageProfile(e));
+        browseGrid.appendChild(div);
       });
-      currentUserDocId = docRef.id;
-    } else {
-      await setDoc(doc(db, "users", currentUserDocId), {
-        uid: currentUser.uid,
-        email: currentUser.email || '',
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "/index.html";
+        return;
+      }
+      currentUser = user;
+      await ensureUserDoc(user.uid, user.email || "");
+      await loadUserDataIntoUI();
+      await loadProfilesNearby();
+    });
+
+    // ===== UI handlers attached to window =====
+
+    window.showSection = (section, e) => {
+      if (e) e.preventDefault();
+      document.querySelectorAll(".section").forEach((s) => s.classList.remove("active"));
+      const target = document.getElementById(section + "-section");
+      if (target) target.classList.add("active");
+
+      document.querySelectorAll("header nav a").forEach((link) => link.classList.remove("active"));
+      const navLink = document.querySelector(`[data-section="${section}"]`);
+      if (navLink) navLink.classList.add("active");
+    };
+
+    window.saveProfile = async (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
+
+      const profileName = document.getElementById("profileName").value.trim();
+      const age = document.getElementById("profileAge").value;
+      const bio = document.getElementById("profileBio").value.trim();
+      const location = document.getElementById("profileLocation").value.trim();
+
+      if (!currentUserDocId) {
+        const docRef = await addDoc(collection(db, "users"), {
+          uid: currentUser.uid,
+          email: currentUser.email || "",
+          profileName,
+          age,
+          bio,
+          location,
+          updatedAt: serverTimestamp()
+        });
+        currentUserDocId = docRef.id;
+      } else {
+        await setDoc(
+          doc(db, "users", currentUserDocId),
+          {
+            uid: currentUser.uid,
+            email: currentUser.email || "",
+            profileName,
+            age,
+            bio,
+            location,
+            updatedAt: serverTimestamp()
+          },
+          { merge: true }
+        );
+      }
+
+      currentUserData = {
+        ...currentUserData,
         profileName,
         age,
         bio,
-        location,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-    }
+        location
+      };
+      await loadUserDataIntoUI();
+      alert("Profile saved!");
+      showSection("browse");
+      await loadProfilesNearby();
+    };
 
-    document.getElementById('sidebarName').textContent = profileName || 'Create Profile';
-    alert('Profile saved!');
-    showSection('browse');
-    await loadProfiles();
-  };
+    window.saveSettings = async (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
 
-  window.saveSettings = async (e) => {
-    e.preventDefault();
-    if (!currentUser) return;
+      const newEmail = document.getElementById("settingsEmail").value.trim();
+      const newPassword = document.getElementById("settingsPassword").value;
+      const notificationsEnabled = document.getElementById("notificationsEnabled").checked;
 
-    const newEmail = document.getElementById('settingsEmail').value.trim();
-    const newPassword = document.getElementById('settingsPassword').value;
+      try {
+        if (newEmail && newEmail !== currentUser.email) {
+          await updateEmail(currentUser, newEmail);
+        }
+        if (newPassword) {
+          await updatePassword(currentUser, newPassword);
+        }
 
-    try {
-      if (newEmail && newEmail !== currentUser.email) {
-        await updateEmail(currentUser, newEmail);
-      }
+        if (currentUserDocId) {
+          await setDoc(
+            doc(db, "users", currentUserDocId),
+            {
+              email: newEmail || currentUser.email,
+              notificationsEnabled,
+              updatedAt: serverTimestamp()
+            },
+            { merge: true }
+          );
+        }
 
-      if (newPassword) {
-        await updatePassword(currentUser, newPassword);
-      }
-
-      if (currentUserDocId) {
-        await setDoc(doc(db, "users", currentUserDocId), {
+        currentUserData = {
+          ...currentUserData,
           email: newEmail || currentUser.email,
-          notificationsEnabled: document.getElementById('notificationsEnabled').checked,
-          updatedAt: serverTimestamp()
-        }, { merge: true });
+          notificationsEnabled
+        };
+
+        alert("Settings saved!");
+      } catch (err) {
+        console.error(err);
+        if (err.code === "auth/requires-recent-login") {
+          alert("Please log out and log in again, then update your email or password.");
+        } else {
+          alert("There was an error updating your settings. Please re-login and try again.");
+        }
       }
+    };
 
-      alert('Settings saved!');
-    } catch (err) {
-      console.error(err);
-      alert('There was an error updating your settings. Please re‑login and try again.');
-    }
-  };
+    window.logout = async () => {
+      await signOut(auth);
+      window.location.href = "/index.html";
+    };
 
-  window.logout = async () => {
-    await signOut(auth);
-    window.location.href = '/index.html';
-  };
+    window.upgradeToStripe = () => {
+      window.location.href = STRIPE_CHECKOUT_URL;
+    };
 
-  window.upgradeToStripe = (checkoutUrl) => {
-    window.location.href = checkoutUrl;
-  };
+    window.likeProfile = (e) => {
+      e.stopPropagation();
+      alert("Profile liked! 💖");
+    };
 
-  window.likeProfile = (e) => {
-    e.stopPropagation();
-    alert('Profile liked! 💖');
-  };
+    window.messageProfile = (e) => {
+      e.stopPropagation();
+      alert("Chat coming soon! 💬");
+    };
 
-  window.messageProfile = (e) => {
-    e.stopPropagation();
-    alert('Chat coming soon! 💬');
-  };
+    window.viewProfile = (profileId) => {
+      alert("Profile details loading...");
+    };
 
-  window.viewProfile = (profileId) => {
-    alert('Profile details loading...');
-  };
+    window.deleteAccount = () => {
+      if (confirm("Are you sure? This cannot be undone.")) {
+        alert("Account deletion requested. We'll process this within 24 hours.");
+      }
+    };
+  </script>
+</head>
+<body>
+  <header>
+    <div class="logo">Oodles & Doodles</div>
+    <nav>
+      <a href="#" data-section="profile" class="active" onclick="showSection('profile', event)">My Profile</a>
+      <a href="#" data-section="browse" onclick="showSection('browse', event)">Browse</a>
+    </nav>
+    <div class="user-pill">
+      <span id="headerUserEmail"></span>
+    </div>
+  </header>
 
-  window.deleteAccount = () => {
-    if (confirm('Are you sure? This cannot be undone.')) {
-      alert('Account deletion requested. We\'ll process this within 24 hours.');
-    }
-  };
-</script>
+  <main>
+    <aside id="sidebar">
+      <div id="sidebarName">Create Profile</div>
+      <div id="sidebarEmail"></div>
+
+      <div class="plan-pill">
+        Plan: <span id="currentPlan">Free Trial</span> ·
+        <span id="planStatus">Active</span>
+      </div>
+
+      <div class="plan-meta">
+        Expiry: <span id="planExpiry">60 days</span><br />
+        Next billing: <span id="nextBilling">TBD</span>
+      </div>
+
+      <div id="trialBanner">
+        <strong>Trial active</strong><br />
+        You have <span id="trialDays">60</span> days remaining on your free trial.
+      </div>
+
+      <div class="sidebar-actions">
+        <button class="btn-upgrade" type="button" onclick="upgradeToStripe()">Upgrade / Renew</button>
+        <button class="btn-logout" type="button" onclick="logout()">Logout</button>
+        <button class="btn-danger" type="button" onclick="deleteAccount()">Delete account</button>
+      </div>
+    </aside>
+
+    <section>
+      <div id="subscriptionOverlay" class="subscription-overlay">
+        <strong>Your trial has ended.</strong><br />
+        Renew your subscription to continue browsing and connecting with other members.
+        <button type="button" onclick="upgradeToStripe()">Renew subscription</button>
+      </div>
+
+      <section id="profile-section" class="section active">
+        <div class="card">
+          <h2>My profile</h2>
+          <p class="sub">Edit your basic details so others can discover you.</p>
+          <form onsubmit="saveProfile(event)">
+            <label for="profileName">Name</label>
+            <input id="profileName" placeholder="Name" />
+
+            <label for="profileAge">Age</label>
+            <input id="profileAge" type="number" placeholder="Age" />
+
+            <label for="profileLocation">Location</label>
+            <input id="profileLocation" placeholder="City, suburb, etc." />
+
+            <label for="profileBio">Bio</label>
+            <textarea id="profileBio" placeholder="Tell others a little about you…"></textarea>
+
+            <button type="submit">Save profile</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Settings</h2>
+          <p class="sub">Manage your account, notifications, and security.</p>
+          <form onsubmit="saveSettings(event)">
+            <label for="settingsEmail">Email</label>
+            <input id="settingsEmail" type="email" placeholder="Email" />
+
+            <label for="settingsPassword">New password</label>
+            <input id="settingsPassword" type="password" placeholder="Leave blank to keep existing" />
+
+            <div class="settings-row">
+              <label>
+                <input id="notificationsEnabled" type="checkbox" />
+                Enable notifications
+              </label>
+            </div>
+
+            <button type="submit">Save settings</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="browse-section" class="section">
+        <div class="card">
+          <h2>Browse near you</h2>
+          <p class="sub">
+            Discover up to 500 profiles near your location. Only active subscribers and trial members are shown.
+          </p>
+          <div id="browseGrid"></div>
+        </div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
