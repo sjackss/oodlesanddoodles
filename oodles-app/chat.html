@@ -82,5 +82,59 @@
       </div>
     </section>
   </main>
+
+  <!-- 
+ Copyright (c) 2026 Oodles & Doodles Pty Ltd
+ All Rights Reserved
+-->
+<script>
+// Get current user and chat info
+const currentUserId = localStorage.getItem('userId');  
+const chatId = new URLSearchParams(window.location.search).get('chat_id');
+const otherUserId = new URLSearchParams(window.location.search).get('user_id');
+
+// Load messages
+async function loadMessages() {
+  if (!chatId || !currentUserId) return;
+  const response = await fetch(`/.netlify/functions/api-messages?chat_id=${chatId}&user_id=${currentUserId}`);
+  const messages = await response.json();
+  displayMessages(messages);
+}
+
+// Send message
+document.querySelector('.chat-input').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const input = e.target.querySelector('input');
+  const text = input.value.trim();
+  if (!text) return;
+  
+  const response = await fetch('/.netlify/functions/api-messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: chatId, from_user_id: currentUserId, to_user_id: otherUserId, text })
+  });
+  
+  if (response.ok) {
+    input.value = '';
+    loadMessages();
+  }
+});
+
+// Display messages
+function displayMessages(messages) {
+  const container = document.querySelector('.chat-messages');
+  container.innerHTML = messages.map(msg => `
+    <div class="message ${msg.from_user_id === currentUserId ? 'sent' : 'received'}">
+      <p>${msg.text}</p>
+      <span class="time">${new Date(msg.created_at).toLocaleTimeString()}</span>
+    </div>
+  `).join('');
+}
+
+// Auto-reload messages every 3 seconds
+loadMessages();
+setInterval(loadMessages, 3000);
+</script>
 </body>
 </html>
+
