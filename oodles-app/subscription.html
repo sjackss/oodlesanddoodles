@@ -1,0 +1,190 @@
+<!-- 
+ Copyright (c) 2026 Oodles & Doodles Pty Ltd
+ All Rights Reserved
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Subscribe - Oodles & Doodles</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .subscription-page {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+    .plan {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    .plan:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .plan.featured {
+      border-color: #6c5ce7;
+      position: relative;
+    }
+    .plan.featured::before {
+      content: 'MOST POPULAR';
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #6c5ce7;
+      color: white;
+      padding: 5px 20px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .plan h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .price {
+      font-size: 48px;
+      font-weight: bold;
+      color: #6c5ce7;
+      margin: 20px 0;
+    }
+    .plan-features {
+      list-style: none;
+      padding: 0;
+      margin: 30px 0;
+      text-align: left;
+    }
+    .plan-features li {
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .plan-features li:before {
+      content: '✓ ';
+      color: #6c5ce7;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    .btn-subscribe {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-subscribe.primary {
+      background: #6c5ce7;
+      color: white;
+    }
+    .btn-subscribe:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body class="app-body">
+  <header class="top-bar">
+    <div class="logo">
+      <img src="logo-oodles-doodles.jpg" alt="Oodles & Doodles" class="logo-image">
+    </div>
+    <nav class="top-nav">
+      <a href="browse.html" class="nav-link">Browse</a>
+      <a href="matches.html" class="nav-link">Matches</a>
+      <a href="profile.html" class="nav-link">Profile</a>
+      <a href="settings.html" class="nav-link">Settings</a>
+    </nav>
+  </header>
+  
+  <main class="subscription-page">
+    <h1 style="text-align: center; font-size: 48px; margin-bottom: 20px;">Choose Your Plan</h1>
+    <p style="text-align: center; font-size: 18px; color: #666; margin-bottom: 40px;">
+      Upgrade to premium and unlock unlimited messaging, advanced filters, and more!
+    </p>
+    
+    <div class="plans">
+      <div class="plan">
+        <h2>Weekly</h2>
+        <div class="price">$9.99<span style="font-size: 20px;">/week</span></div>
+        <p style="color: #6c5ce7; font-weight: bold;">7-day free trial</p>
+        <ul class="plan-features">
+          <li>Unlimited messaging</li>
+          <li>Advanced filters</li>
+          <li>Profile boost</li>
+          <li>Ad-free experience</li>
+        </ul>
+        <button onclick="checkout('weekly')" class="btn-subscribe primary">Start Free Trial</button>
+      </div>
+      
+      <div class="plan featured">
+        <h2>Monthly</h2>
+        <div class="price">$29.99<span style="font-size: 20px;">/month</span></div>
+        <p style="color: #6c5ce7; font-weight: bold;">7-day free trial</p>
+        <ul class="plan-features">
+          <li>Unlimited messaging</li>
+          <li>Advanced filters</li>
+          <li>Profile boost</li>
+          <li>Ad-free experience</li>
+          <li>Priority support</li>
+        </ul>
+        <button onclick="checkout('monthly')" class="btn-subscribe primary">Start Free Trial</button>
+      </div>
+      
+      <div class="plan">
+        <h2>Lifetime</h2>
+        <div class="price">$99.99<span style="font-size: 20px;">once</span></div>
+        <p style="color: #6c5ce7; font-weight: bold;">One-time payment</p>
+        <ul class="plan-features">
+          <li>Unlimited messaging forever</li>
+          <li>Advanced filters</li>
+          <li>Profile boost</li>
+          <li>Ad-free experience</li>
+          <li>Priority support</li>
+          <li>All future features</li>
+        </ul>
+        <button onclick="checkout('lifetime')" class="btn-subscribe primary">Buy Now</button>
+      </div>
+    </div>
+  </main>
+  
+  <script>
+    async function checkout(plan) {
+      const userId = localStorage.getItem('userId');
+      const email = localStorage.getItem('email');
+      
+      if (!userId || !email) {
+        alert('Please log in first');
+        window.location.href = '/login.html';
+        return;
+      }
+      
+      try {
+        const response = await fetch('/.netlify/functions/api-stripe-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plan, userId, email })
+        });
+        
+        if (!response.ok) throw new Error('Checkout failed');
+        
+        const { url } = await response.json();
+        window.location.href = url;  // Redirect to Stripe checkout
+      } catch (error) {
+        console.error('Checkout error:', error);
+        alert('Something went wrong. Please try again.');
+      }
+    }
+  </script>
+</body>
+</html>
