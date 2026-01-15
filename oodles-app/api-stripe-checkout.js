@@ -1,3 +1,12 @@
+/**
+ * Copyright (c) 2025 Oodles & Doodles
+ * All rights reserved.
+ * Owner: sjackss
+ * 
+ * This file is part of Oodles & Doodles dating application.
+ * Unauthorized copying, distribution, or use is strictly prohibited.
+ */
+
 // netlify/functions/api-stripe-checkout.js
 import Stripe from 'stripe';
 import { sql } from './db.js';
