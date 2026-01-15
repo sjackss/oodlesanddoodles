@@ -1,0 +1,266 @@
+<!--
+ * Copyright (c) 2025 Oodles & Doodles
+ * All rights reserved.
+ * Owner: sjackss
+ * 
+ * This file is part of Oodles & Doodles dating application.
+ * Unauthorized copying, distribution, or use is strictly prohibited.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - Oodles & Doodles</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .success-container {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 3;
+            stroke: #4BB543;
+            stroke-miterlimit: 10;
+            margin: 0 auto 30px;
+            box-shadow: inset 0 0 0 #4BB543;
+            animation: fill 0.4s ease-in-out 0.4s forwards, scale 0.3s ease-in-out 0.9s both;
+        }
+        
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 3;
+            stroke-miterlimit: 10;
+            stroke: #4BB543;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+        
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        @keyframes scale {
+            0%, 100% {
+                transform: none;
+            }
+            50% {
+                transform: scale3d(1.1, 1.1, 1);
+            }
+        }
+        
+        @keyframes fill {
+            100% {
+                box-shadow: inset 0 0 0 30px #4BB543;
+            }
+        }
+        
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .subscription-details {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .subscription-details h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .btn-container {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        
+        .email-note {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+        
+        <h1>Payment Successful!</h1>
+        <p>Thank you for subscribing to Oodles & Doodles Premium</p>
+        
+        <div class="subscription-details" id="subscriptionDetails">
+            <h3>Subscription Details</h3>
+            <div class="detail-row">
+                <span class="detail-label">Plan:</span>
+                <span class="detail-value" id="planName">Loading...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Amount:</span>
+                <span class="detail-value" id="amount">Loading...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Billing:</span>
+                <span class="detail-value" id="billing">Loading...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Next Billing Date:</span>
+                <span class="detail-value" id="nextBilling">Loading...</span>
+            </div>
+        </div>
+        
+        <p>Your premium features are now active!</p>
+        
+        <div class="btn-container">
+            <a href="/matches.html" class="btn btn-primary">Start Matching</a>
+            <a href="/profile.html" class="btn btn-secondary">View Profile</a>
+        </div>
+        
+        <p class="email-note">A confirmation email has been sent to your registered email address.</p>
+    </div>
+    
+    <script>
+        // Get session ID from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        
+        if (sessionId) {
+            // Verify the session and get subscription details
+            fetch('/.netlify/functions/api-stripe-checkout?session_id=' + sessionId)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.session) {
+                        const session = data.session;
+                        
+                        // Update UI with actual subscription details
+                        document.getElementById('planName').textContent = session.metadata?.plan_name || 'Premium';
+                        document.getElementById('amount').textContent = '$' + (session.amount_total / 100).toFixed(2);
+                        document.getElementById('billing').textContent = session.metadata?.billing_cycle || 'Monthly';
+                        
+                        // Calculate next billing date (30 days from now for monthly)
+                        const nextDate = new Date();
+                        nextDate.setDate(nextDate.getDate() + 30);
+                        document.getElementById('nextBilling').textContent = nextDate.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+                    } else {
+                        console.error('Invalid session');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error verifying session:', error);
+                });
+        } else {
+            // No session ID - redirect to subscription page
+            setTimeout(() => {
+                window.location.href = '/subscription.html';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
