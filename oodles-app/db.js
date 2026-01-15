@@ -1,3 +1,12 @@
+/**
+ * Copyright (c) 2025 Oodles & Doodles
+ * All rights reserved.
+ * Owner: sjackss
+ * 
+ * This file is part of Oodles & Doodles dating application.
+ * Unauthorized copying, distribution, or use is strictly prohibited.
+ */
+
 // Database configuration for Oodles & Doodles
 import { neon } from '@neondatabase/serverless';
 
