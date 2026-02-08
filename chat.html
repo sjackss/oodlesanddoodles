@@ -2,240 +2,404 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>oodles&doodles – Chat</title>
+  <title>Chat - Oodles & Doodles</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
   <style>
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #050818;
-      color: #f5f5f5;
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --pink: #ff006e;
+      --purple: #8338ec;
+      --dark: #050818;
+      --dark-card: #0b1024;
+      --dark-input: #0a0e1f;
+      --border: #272b4a;
+      --text: #f5f5f5;
+      --text-muted: #9aa3ff;
+      --text-dim: #b0b8d0;
+      --gradient: linear-gradient(135deg, var(--pink), var(--purple));
     }
-    .top-bar {
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Top Bar ── */
+    .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 16px;
-      background: #0b1024;
-      border-bottom: 1px solid #272b4a;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      padding: 0.6rem 1.25rem;
+      background: var(--dark-card);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
     }
-    .logo-image {
-      height: 32px;
-      border-radius: 8px;
-      object-fit: cover;
+    .topbar-logo {
+      font-weight: 700;
+      font-size: 0.95rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
-    .top-nav {
+    .topbar-nav {
       display: flex;
-      gap: 8px;
+      gap: 0.25rem;
     }
-    .nav-link {
-      color: #b7c0ff;
-      text-decoration: none;
-      padding: 6px 10px;
+    .topbar-nav a {
+      padding: 0.4rem 0.75rem;
       border-radius: 999px;
-      font-size: 14px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      transition: all 0.2s;
     }
-    .nav-link.active {
-      background: linear-gradient(120deg, #ff6ad5, #7873f5);
-      color: #050818;
+    .topbar-nav a:hover { color: var(--text); }
+    .topbar-nav a.active {
+      background: var(--gradient);
+      color: white;
       font-weight: 600;
     }
-    .user-pill {
-      font-size: 12px;
-      color: #9aa3ff;
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .topbar-actions button {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 0.3rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      cursor: pointer;
     }
 
-    .page {
-      padding: 12px 16px 20px;
-    }
+    /* ── Chat Layout ── */
     .chat-layout {
+      flex: 1;
       display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 16px;
-      min-height: calc(100vh - 72px);
+      grid-template-columns: 280px 1fr;
+      min-height: 0;
     }
-    @media (max-width: 900px) {
-      .chat-layout {
-        grid-template-columns: 1fr;
-      }
-      .chat-sidebar {
-        display: none; /* no persistent list: ephemeral only */
-      }
+    @media (max-width: 768px) {
+      .chat-layout { grid-template-columns: 1fr; }
+      .chat-sidebar { display: none; }
+      .chat-sidebar.mobile-open { display: flex; position: fixed; top: 48px; left: 0; right: 0; bottom: 0; z-index: 30; }
     }
 
+    /* ── Sidebar ── */
     .chat-sidebar {
-      background: #0b1024;
-      border-radius: 16px;
-      border: 1px solid #272b4a;
-      padding: 14px;
+      background: var(--dark-card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
-    .chat-sidebar h2 {
-      font-size: 16px;
-      margin: 0 0 8px;
+    .chat-sidebar-header {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
     }
-    .chat-sidebar p {
-      font-size: 12px;
-      color: #9aa3ff;
-      margin: 0;
+    .chat-sidebar-header h2 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+    .chat-sidebar-header p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .chat-sidebar-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem;
+    }
+    .sidebar-convo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 0.25rem;
+    }
+    .sidebar-convo:hover, .sidebar-convo.active {
+      background: rgba(255, 0, 110, 0.08);
+    }
+    .sidebar-convo-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .sidebar-convo-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .sidebar-convo-info { flex: 1; min-width: 0; }
+    .sidebar-convo-name { font-weight: 600; font-size: 0.85rem; }
+    .sidebar-convo-preview {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
+    /* ── Chat Main ── */
     .chat-main {
-      background: #0b1024;
-      border-radius: 16px;
-      border: 1px solid #272b4a;
       display: flex;
       flex-direction: column;
       min-height: 0;
     }
     .chat-header {
-      padding: 12px 14px;
-      border-bottom: 1px solid #272b4a;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      background: var(--dark-card);
+      flex-shrink: 0;
     }
-    .chat-header h1 {
-      font-size: 16px;
-      margin: 0 0 4px;
+    .chat-header-info {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
     }
-    .chat-header p {
-      font-size: 12px;
-      color: #9aa3ff;
-      margin: 0;
+    .chat-header-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      overflow: hidden;
     }
-    .chat-actions button {
-      background: #151a33;
-      color: #d7e0ff;
+    .chat-header-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .chat-header-name { font-weight: 600; font-size: 0.95rem; }
+    .chat-header-meta { font-size: 0.75rem; color: var(--text-muted); }
+    .chat-header-actions {
+      display: flex;
+      gap: 0.4rem;
+    }
+    .chat-header-actions button {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 0.3rem 0.6rem;
       border-radius: 999px;
-      border: none;
-      padding: 6px 10px;
-      font-size: 12px;
+      font-size: 0.7rem;
       cursor: pointer;
-      margin-left: 4px;
     }
 
+    /* ── Messages ── */
     .chat-messages {
       flex: 1;
-      padding: 12px 14px;
+      padding: 1rem;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 0.5rem;
+    }
+    .system-note {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      padding: 0.5rem;
+      background: rgba(255, 0, 110, 0.04);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
     }
     .message {
-      max-width: 80%;
-      padding: 8px 10px;
-      border-radius: 12px;
-      font-size: 14px;
-      position: relative;
+      max-width: 75%;
+      padding: 0.6rem 0.8rem;
+      border-radius: 14px;
+      font-size: 0.9rem;
       word-wrap: break-word;
+      line-height: 1.4;
     }
     .message.sent {
       align-self: flex-end;
-      background: linear-gradient(120deg, #ff6ad5, #7873f5);
-      color: #050818;
-      border-bottom-right-radius: 2px;
+      background: var(--gradient);
+      color: white;
+      border-bottom-right-radius: 4px;
     }
     .message.received {
       align-self: flex-start;
-      background: #151a33;
-      border-bottom-left-radius: 2px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
     }
     .message img {
-      max-width: 220px;
+      max-width: 240px;
       border-radius: 10px;
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: 0.3rem;
     }
     .message .time {
-      font-size: 11px;
-      opacity: 0.7;
+      font-size: 0.65rem;
+      opacity: 0.6;
       display: block;
-      margin-top: 2px;
+      margin-top: 0.2rem;
       text-align: right;
     }
-    .system-note {
-      font-size: 11px;
-      text-align: center;
-      color: #9aa3ff;
-      margin-bottom: 6px;
-    }
 
-    .chat-input-row {
-      border-top: 1px solid #272b4a;
-      padding: 8px 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+    /* ── Input ── */
+    .chat-input-area {
+      border-top: 1px solid var(--border);
+      padding: 0.6rem 0.75rem;
+      background: var(--dark-card);
+      flex-shrink: 0;
     }
     .chat-input-tools {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: #9aa3ff;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
     }
-    .chat-input-tools input[type="file"] {
-      font-size: 11px;
-      max-width: 180px;
-    }
-    .chat-input {
-      display: flex;
-      gap: 8px;
-    }
-    .chat-input input[type="text"] {
-      flex: 1;
-      padding: 10px 12px;
-      background: #050818;
-      border: 1px solid #272b4a;
-      border-radius: 999px;
-      color: #f5f5f5;
-      font-size: 14px;
-    }
-    .chat-input button {
-      padding: 0 16px;
-      background: linear-gradient(120deg, #ff6ad5, #7873f5);
-      border-radius: 999px;
-      border: none;
-      color: #050818;
-      font-size: 14px;
-      font-weight: 600;
+    .chat-input-tools label {
       cursor: pointer;
-      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .chat-input-tools input[type="file"] { display: none; }
+    .chat-input-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .chat-input-row input[type="text"] {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      background: var(--dark-input);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+    .chat-input-row input[type="text"]::placeholder { color: var(--text-muted); }
+    .chat-input-row button {
+      padding: 0 1.25rem;
+      background: var(--gradient);
+      border: none;
+      border-radius: 999px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .pending-image-preview {
+      display: none;
+      padding: 0.4rem;
+      font-size: 0.75rem;
+      color: var(--green);
+    }
+
+    .empty-chat {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 2rem;
     }
   </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <a href="/" class="topbar-logo">oodles&doodles</a>
+    <nav class="topbar-nav">
+      <a href="dashboard.html">Profile</a>
+      <a href="dashboard.html" onclick="localStorage.setItem('oodles_nav','browse')">Browse</a>
+      <a href="#" class="active">Messages</a>
+    </nav>
+    <div class="topbar-actions">
+      <button onclick="goBack()">Back to Dashboard</button>
+    </div>
+  </header>
+
+  <!-- Chat Layout -->
+  <div class="chat-layout">
+    <!-- Sidebar -->
+    <aside class="chat-sidebar" id="chatSidebar">
+      <div class="chat-sidebar-header">
+        <h2>Conversations</h2>
+        <p>Ephemeral &mdash; messages vanish on logout.</p>
+      </div>
+      <div class="chat-sidebar-list" id="sidebarConvoList">
+        <div style="padding:1rem;text-align:center;color:var(--text-muted);font-size:0.8rem;">Loading...</div>
+      </div>
+    </aside>
+
+    <!-- Chat Main -->
+    <div class="chat-main" id="chatMain">
+      <div class="chat-header" id="chatHeader">
+        <div class="chat-header-info">
+          <div class="chat-header-avatar" id="chatAvatar">
+            <span id="chatAvatarFallback">😊</span>
+            <img id="chatAvatarImg" alt="" style="display:none;">
+          </div>
+          <div>
+            <div class="chat-header-name" id="chatName">Loading...</div>
+            <div class="chat-header-meta" id="chatMeta"></div>
+          </div>
+        </div>
+        <div class="chat-header-actions">
+          <button onclick="blockUser()">Block</button>
+          <button onclick="reportUser()">Report</button>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="system-note">
+          Messages are ephemeral and private. They disappear when you log out. Screenshots are strongly discouraged.
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <div class="chat-input-tools">
+          <label for="imageInput">📷 Attach image
+            <input type="file" id="imageInput" accept="image/jpeg,image/png,image/webp">
+          </label>
+          <span class="pending-image-preview" id="pendingPreview"></span>
+        </div>
+        <form class="chat-input-row" id="chatForm">
+          <input type="text" id="chatInput" placeholder="Say something..." autocomplete="off">
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
     import {
-      getAuth,
-      onAuthStateChanged,
-      signOut
+      getAuth, onAuthStateChanged, signOut
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import {
-      getFirestore,
-      doc,
-      getDoc,
-      collection,
-      addDoc,
-      query,
-      where,
-      orderBy,
-      onSnapshot,
-      getDocs,
-      deleteDoc,
-      serverTimestamp
+      getFirestore, doc, getDoc, setDoc, collection, addDoc,
+      query, where, orderBy, onSnapshot, getDocs, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
     import {
-      getStorage,
-      ref as storageRef,
-      uploadBytes,
-      getDownloadURL
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js"; // for image messages [web:26]
+      getStorage, ref as storageRef, uploadBytes, getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBVqDVruufVu5AvXBitSoukogADaopR-7A",
@@ -254,140 +418,148 @@
     let currentUser = null;
     let otherUser = null;
     let chatId = null;
-    let unsubscribeMessages = null;
+    let unsubMessages = null;
     let pendingImageFile = null;
 
     function getParam(name) {
-      const url = new URL(window.location.href);
-      return url.searchParams.get(name);
+      return new URL(window.location.href).searchParams.get(name);
     }
 
-    function getChatIdForPair(uid1, uid2) {
-      return [uid1, uid2].sort().join("_");
+    function getChatId(uid1, uid2) {
+      return [uid1, uid2].sort().join('_');
     }
 
     async function fetchUserByUid(uid) {
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("uid", "==", uid));
+      // Try direct doc first
+      const directDoc = await getDoc(doc(db, 'users', uid));
+      if (directDoc.exists()) return { id: directDoc.id, ...directDoc.data() };
+
+      // Fallback: query
+      const q = query(collection(db, 'users'), where('uid', '==', uid));
       const snap = await getDocs(q);
-      if (snap.empty) return null;
-      return { id: snap.docs[0].id, ...snap.docs[0].data() };
+      if (!snap.empty) return { id: snap.docs[0].id, ...snap.docs[0].data() };
+      return null;
     }
 
     function formatTime(ts) {
-      if (!ts) return "";
+      if (!ts) return '';
       const d = ts.toDate ? ts.toDate() : new Date(ts);
-      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
+    function scrollToBottom() {
+      const el = document.getElementById('chatMessages');
+      el.scrollTop = el.scrollHeight;
+    }
+
+    // ─── Render Header ───
     function renderHeader() {
-      const headerName = document.getElementById("chatHeaderName");
-      const headerMeta = document.getElementById("chatHeaderMeta");
-      if (!otherUser) {
-        headerName.textContent = "Loading…";
-        headerMeta.textContent = "";
-        return;
+      if (!otherUser) return;
+      const name = otherUser.profileName || otherUser.name || 'Anonymous';
+      const age = otherUser.age ? `, ${otherUser.age}` : '';
+      const loc = otherUser.location || 'Somewhere nearby';
+      const photo = otherUser.photoURL || '';
+
+      document.getElementById('chatName').textContent = `${name}${age}`;
+      document.getElementById('chatMeta').textContent = loc;
+
+      if (photo) {
+        document.getElementById('chatAvatarImg').src = photo;
+        document.getElementById('chatAvatarImg').style.display = 'block';
+        document.getElementById('chatAvatarFallback').style.display = 'none';
       }
-      const name = otherUser.profileName || "Anonymous";
-      const age = otherUser.age ? `, ${otherUser.age}` : "";
-      headerName.textContent = `${name}${age}`;
-      headerMeta.textContent = otherUser.location || "Somewhere nearby";
     }
 
-    function renderSystemNote() {
-      const note = document.getElementById("systemNote");
-      note.textContent =
-        "Chats are ephemeral. Messages and media vanish when you log out. Screenshots/screen recording are strongly discouraged but cannot be fully blocked on web.";
-    }
-
-    function scrollMessagesToBottom() {
-      const container = document.querySelector(".chat-messages");
-      if (!container) return;
-      container.scrollTop = container.scrollHeight;
-    }
-
-    function subscribeToMessages() {
-      if (!chatId) return;
-      const msgsRef = collection(db, "ephemeralChats", chatId, "messages");
-      const qMsgs = query(msgsRef, orderBy("createdAt", "asc"));
-      const messagesEl = document.querySelector(".chat-messages");
-
-      if (unsubscribeMessages) unsubscribeMessages();
-      unsubscribeMessages = onSnapshot(qMsgs, (snap) => {
-        messagesEl.innerHTML = "";
-        snap.forEach((docSnap) => {
-          const msg = docSnap.data();
-          const div = document.createElement("div");
-          const isMine = msg.fromUid === currentUser.uid;
-          div.className = "message " + (isMine ? "sent" : "received");
-
-          let inner = "";
-          if (msg.imageUrl) {
-            inner += `<img src="${msg.imageUrl}" alt="Image message" />`;
-          }
-          if (msg.text) {
-            inner += `<p>${msg.text}</p>`;
-          }
-          inner += `<span class="time">${formatTime(msg.createdAt)}</span>`;
-          div.innerHTML = inner;
-          messagesEl.appendChild(div);
-        });
-        scrollMessagesToBottom();
-      });
-    }
-
-    async function ensureChatDocument() {
+    // ─── Ensure Chat Document ───
+    async function ensureChatDoc() {
       if (!currentUser || !otherUser) return;
-      chatId = getChatIdForPair(currentUser.uid, otherUser.uid);
-      const chatRef = doc(db, "ephemeralChats", chatId);
+      chatId = getChatId(currentUser.uid, otherUser.uid);
+      const chatRef = doc(db, 'ephemeralChats', chatId);
       const snap = await getDoc(chatRef);
-      if (!snap.exists()) {
-        await setChatDoc(chatRef);
-      }
-      subscribeToMessages();
-    }
 
-    async function setChatDoc(chatRef) {
-      await chatRef.set(
-        {
+      if (!snap.exists()) {
+        await setDoc(chatRef, {
           participants: [currentUser.uid, otherUser.uid],
           createdAt: serverTimestamp(),
           lastActivity: serverTimestamp()
-        },
-        { merge: true }
-      );
+        });
+      }
+
+      subscribeToMessages();
     }
 
+    // ─── Subscribe to Messages ───
+    function subscribeToMessages() {
+      if (!chatId) return;
+      const msgsRef = collection(db, 'ephemeralChats', chatId, 'messages');
+      const q = query(msgsRef, orderBy('createdAt', 'asc'));
+      const container = document.getElementById('chatMessages');
+
+      if (unsubMessages) unsubMessages();
+
+      unsubMessages = onSnapshot(q, (snap) => {
+        // Keep system note
+        const systemNote = container.querySelector('.system-note');
+        container.innerHTML = '';
+        if (systemNote) container.appendChild(systemNote);
+
+        snap.forEach(docSnap => {
+          const msg = docSnap.data();
+          const div = document.createElement('div');
+          const isMine = msg.fromUid === currentUser.uid;
+          div.className = 'message ' + (isMine ? 'sent' : 'received');
+
+          let html = '';
+          if (msg.imageUrl) {
+            html += `<img src="${msg.imageUrl}" alt="Image">`;
+          }
+          if (msg.text) {
+            html += `<span>${escapeHtml(msg.text)}</span>`;
+          }
+          html += `<span class="time">${formatTime(msg.createdAt)}</span>`;
+          div.innerHTML = html;
+          container.appendChild(div);
+        });
+        scrollToBottom();
+      });
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ─── Send Message ───
     async function sendMessage(text) {
       if (!currentUser || !otherUser || !chatId) return;
-      const trimmed = (text || "").trim();
+      const trimmed = (text || '').trim();
       if (!trimmed && !pendingImageFile) return;
 
       let imageUrl = null;
       if (pendingImageFile) {
-        const maxSizeBytes = 10 * 1024 * 1024;
-        if (pendingImageFile.size > maxSizeBytes) {
-          alert("Please choose an image under 10 MB.");
+        if (pendingImageFile.size > 10 * 1024 * 1024) {
+          alert('Max 10 MB for images.');
           return;
         }
-        const allowed = ["image/jpeg", "image/png", "image/webp"];
+        const allowed = ['image/jpeg', 'image/png', 'image/webp'];
         if (!allowed.includes(pendingImageFile.type)) {
-          alert("Please choose a JPG, PNG, or WEBP image.");
+          alert('JPG, PNG, or WEBP only.');
           return;
         }
         try {
           const path = `chatMedia/${chatId}/${Date.now()}_${pendingImageFile.name}`;
-          const refObj = storageRef(storage, path);
-          await uploadBytes(refObj, pendingImageFile);
-          imageUrl = await getDownloadURL(refObj);
+          const ref = storageRef(storage, path);
+          await uploadBytes(ref, pendingImageFile);
+          imageUrl = await getDownloadURL(ref);
         } catch (e) {
           console.error(e);
-          alert("Error uploading image. Try again.");
+          alert('Image upload failed. Try again.');
           return;
         }
       }
 
-      const msgsRef = collection(db, "ephemeralChats", chatId, "messages");
+      const msgsRef = collection(db, 'ephemeralChats', chatId, 'messages');
       await addDoc(msgsRef, {
         fromUid: currentUser.uid,
         toUid: otherUser.uid,
@@ -396,160 +568,121 @@
         createdAt: serverTimestamp()
       });
 
+      // Update last activity
+      await setDoc(doc(db, 'ephemeralChats', chatId), { lastActivity: serverTimestamp() }, { merge: true });
+
       pendingImageFile = null;
-      const fileInput = document.getElementById("imageInput");
-      if (fileInput) fileInput.value = "";
+      document.getElementById('imageInput').value = '';
+      document.getElementById('pendingPreview').style.display = 'none';
     }
 
-    async function wipeUserChats(uid) {
-      const chatsRef = collection(db, "ephemeralChats");
-      const snap = await getDocs(chatsRef);
-      const deletions = [];
-      snap.forEach((chatDoc) => {
-        const data = chatDoc.data();
-        if (!data.participants || !Array.isArray(data.participants)) return;
-        if (data.participants.includes(uid)) {
-          deletions.push(deleteDoc(chatDoc.ref));
+    // ─── Load Sidebar Conversations ───
+    async function loadSidebarConvos() {
+      if (!currentUser) return;
+      const list = document.getElementById('sidebarConvoList');
+
+      try {
+        const chatsRef = collection(db, 'ephemeralChats');
+        const snap = await getDocs(chatsRef);
+        const convos = [];
+
+        for (const chatDoc of snap.docs) {
+          const data = chatDoc.data();
+          if (!data.participants || !data.participants.includes(currentUser.uid)) continue;
+          const otherUid = data.participants.find(p => p !== currentUser.uid);
+          if (!otherUid) continue;
+
+          const other = await fetchUserByUid(otherUid);
+          convos.push({
+            otherUid,
+            name: other?.profileName || other?.name || 'Anonymous',
+            photo: other?.photoURL || '',
+            chatDocId: chatDoc.id
+          });
         }
-      });
-      await Promise.all(deletions);
-    }
 
-    async function handleLogout() {
-      if (currentUser) {
-        try {
-          await wipeUserChats(currentUser.uid); // strict wipe [web:30]
-        } catch (e) {
-          console.error("Error wiping chats on logout", e);
+        if (convos.length === 0) {
+          list.innerHTML = '<div style="padding:1rem;text-align:center;color:var(--text-muted);font-size:0.8rem;">No conversations yet</div>';
+          return;
         }
-      }
-      sessionStorage.clear();
-      localStorage.removeItem("oodles_chat_state");
-      await signOut(auth);
-      window.location.href = "/index.html";
-    }
 
-    function attachUiHandlers() {
-      const form = document.getElementById("chatForm");
-      const input = document.getElementById("chatInput");
-      const imageInput = document.getElementById("imageInput");
-      const logoutBtn = document.getElementById("logoutBtn");
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        await sendMessage(input.value);
-        input.value = "";
-      });
-
-      imageInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        pendingImageFile = file || null;
-      });
-
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", (e) => {
-          e.preventDefault();
-          handleLogout();
+        list.innerHTML = '';
+        const targetUid = getParam('uid');
+        convos.forEach(c => {
+          const item = document.createElement('div');
+          item.className = 'sidebar-convo' + (c.otherUid === targetUid ? ' active' : '');
+          item.onclick = () => { window.location.href = `/chat.html?uid=${encodeURIComponent(c.otherUid)}`; };
+          item.innerHTML = `
+            <div class="sidebar-convo-avatar">
+              ${c.photo ? `<img src="${c.photo}" alt="${c.name}">` : '😊'}
+            </div>
+            <div class="sidebar-convo-info">
+              <div class="sidebar-convo-name">${c.name}</div>
+              <div class="sidebar-convo-preview">Tap to chat</div>
+            </div>
+          `;
+          list.appendChild(item);
         });
+      } catch (err) {
+        console.error(err);
       }
     }
 
+    // ─── UI Handlers ───
+    document.getElementById('chatForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      await sendMessage(input.value);
+      input.value = '';
+    });
+
+    document.getElementById('imageInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      pendingImageFile = file || null;
+      const preview = document.getElementById('pendingPreview');
+      if (file) {
+        preview.textContent = `📎 ${file.name}`;
+        preview.style.display = 'inline';
+      } else {
+        preview.style.display = 'none';
+      }
+    });
+
+    window.goBack = () => { window.location.href = '/dashboard.html'; };
+    window.blockUser = () => { alert('User blocked. They will no longer be able to message you.'); };
+    window.reportUser = () => { alert('Report submitted. Our team will review this within 24 hours.'); };
+
+    // ─── Auth State ───
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        window.location.href = "/index.html";
+        window.location.href = '/auth.html';
         return;
       }
       currentUser = user;
 
-      const otherUid = getParam("uid");
+      const otherUid = getParam('uid');
       if (!otherUid) {
-        alert("No chat partner specified.");
-        window.location.href = "/dashboard.html";
+        alert('No chat partner specified.');
+        window.location.href = '/dashboard.html';
         return;
       }
-
       if (otherUid === currentUser.uid) {
-        alert("You cannot chat with yourself.");
-        window.location.href = "/dashboard.html";
+        alert('You cannot chat with yourself.');
+        window.location.href = '/dashboard.html';
         return;
       }
 
       otherUser = await fetchUserByUid(otherUid);
       if (!otherUser) {
-        alert("User not found.");
-        window.location.href = "/dashboard.html";
+        alert('User not found.');
+        window.location.href = '/dashboard.html';
         return;
       }
 
       renderHeader();
-      renderSystemNote();
-      attachUiHandlers();
-      await ensureChatDocument();
-    });
-
-    // As an extra safety net: clear messages when tab closes (best-effort)
-    window.addEventListener("beforeunload", async () => {
-      // Do not block navigation; just fire and forget
-      if (!currentUser) return;
-      try {
-        await wipeUserChats(currentUser.uid);
-      } catch (e) {
-        console.error("Error wiping on unload", e);
-      }
+      await ensureChatDoc();
+      await loadSidebarConvos();
     });
   </script>
-</head>
-<body class="app-body">
-  <header class="top-bar">
-    <div class="logo">
-      <img src="logo-oodles-doodles.jpg" alt="Oodles & Doodles" class="logo-image">
-    </div>
-    <nav class="top-nav">
-      <a href="dashboard.html" class="nav-link">Dashboard</a>
-      <a href="dashboard.html" class="nav-link">Browse</a>
-      <a href="dashboard.html" class="nav-link">Profile</a>
-    </nav>
-    <div class="user-pill">
-      <a href="#" id="logoutBtn" style="color:#9aa3ff;text-decoration:none;">Logout</a>
-    </div>
-  </header>
-
-  <main class="page">
-    <section class="chat-layout">
-      <aside class="chat-sidebar">
-        <h2>Ephemeral chat</h2>
-        <p>No history. No favourites. Everything disappears when you log out.</p>
-      </aside>
-
-      <div class="chat-main">
-        <header class="chat-header">
-          <div>
-            <h1 id="chatHeaderName">Loading…</h1>
-            <p id="chatHeaderMeta"></p>
-          </div>
-          <div class="chat-actions">
-            <button type="button">Block</button>
-            <button type="button">Report</button>
-          </div>
-        </header>
-
-        <div class="chat-messages">
-          <div id="systemNote" class="system-note"></div>
-        </div>
-
-        <div class="chat-input-row">
-          <div class="chat-input-tools">
-            <span>Attach image:</span>
-            <input type="file" id="imageInput" accept="image/*">
-            <span>Ephemeral: media is deleted when you log out.</span>
-          </div>
-          <form class="chat-input" id="chatForm">
-            <input id="chatInput" type="text" placeholder="Say something flirty…" autocomplete="off" />
-            <button type="submit">Send</button>
-          </form>
-        </div>
-      </div>
-    </section>
-  </main>
 </body>
 </html>

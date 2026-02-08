@@ -4,28 +4,48 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Oodles & Doodles – Gay Dating Without The Bullshit</title>
+  <meta name="description" content="Ad-free, queer-run dating for men 18+. Real connections, no fake profiles, no paywalls just to say hello.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
   <style>
-    * {
+    *, *::before, *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+    :root {
+      --pink: #ff006e;
+      --purple: #8338ec;
+      --blue: #3a86ff;
+      --dark: #050818;
+      --dark-card: #0b1024;
+      --border: #272b4a;
+      --text: #f5f5f5;
+      --text-muted: #9aa3ff;
+      --text-dim: #ccc;
+      --green: #51cf66;
+      --gradient: linear-gradient(135deg, var(--pink), var(--purple));
+      --gradient-wide: linear-gradient(135deg, var(--pink), var(--purple), var(--blue));
+    }
+    html { scroll-behavior: smooth; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-      color: #fff;
+      background: var(--dark);
+      color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+      line-height: 1.6;
     }
-    /* Navigation */
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Navigation ── */
     nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1.5rem 2rem;
-      backdrop-filter: blur(10px);
-      background: rgba(15, 12, 41, 0.7);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1rem 2rem;
+      background: rgba(5, 8, 24, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -33,404 +53,576 @@
     .logo-container {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.6rem;
     }
-    .logo-img {
-      height: 40px;
-      width: auto;
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
     }
     .logo-text {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: 700;
-      background: linear-gradient(135deg, #ff006e, #8338ec);
+      background: var(--gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--text); }
     .nav-buttons {
       display: flex;
-      gap: 1rem;
+      gap: 0.75rem;
     }
-    /* Hero Section */
-    .hero {
-      text-align: center;
-      padding: 4rem 2rem 2rem;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    .hero-logo {
-      height: 100px;
-      margin-bottom: 2rem;
-    }
-    .hero h1 {
-      font-size: 3.5rem;
-      margin-bottom: 1rem;
-      background: linear-gradient(135deg, #ff006e, #8338ec, #3a86ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-weight: 800;
-      line-height: 1.2;
-    }
-    .hero p {
-      font-size: 1.3rem;
-      color: #ccc;
-      margin-bottom: 2rem;
-      line-height: 1.6;
-    }
-    .cta-buttons {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      margin-bottom: 3rem;
-      flex-wrap: wrap;
-    }
+
+    /* ── Buttons ── */
     .btn {
-      padding: 0.875rem 2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.7rem 1.5rem;
       border: none;
-      border-radius: 8px;
-      font-size: 1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      text-decoration: none;
     }
     .btn-primary {
-      background: linear-gradient(135deg, #ff006e, #8338ec);
+      background: var(--gradient);
       color: white;
     }
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(255, 0, 110, 0.3);
+      box-shadow: 0 8px 25px rgba(255, 0, 110, 0.35);
     }
-    .btn-secondary {
+    .btn-outline {
       background: transparent;
-      color: white;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: var(--text);
+      border: 1.5px solid var(--border);
     }
-    .btn-secondary:hover {
-      border-color: #ff006e;
-      background: rgba(255, 0, 110, 0.1);
+    .btn-outline:hover {
+      border-color: var(--pink);
+      background: rgba(255, 0, 110, 0.08);
     }
-    /* Pricing Section */
-    .pricing {
-      padding: 4rem 2rem;
-      max-width: 1200px;
+    .btn-lg {
+      padding: 0.9rem 2.2rem;
+      font-size: 1rem;
+      border-radius: 12px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem 3rem;
+      max-width: 800px;
       margin: 0 auto;
     }
-    .pricing h2 {
-      text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 3rem;
-      background: linear-gradient(135deg, #ff006e, #8338ec);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      margin-bottom: 3rem;
-    }
-    .pricing-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 2rem;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    .pricing-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #ff006e, transparent);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    .pricing-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(255, 0, 110, 0.3);
-      background: rgba(255, 255, 255, 0.08);
-    }
-    .pricing-card:hover::before {
-      opacity: 1;
-    }
-    .pricing-card.featured {
-      border: 2px solid #ff006e;
-      transform: scale(1.05);
-    }
-    .pricing-card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-    }
-    .pricing-badge {
+    .hero-badge {
       display: inline-block;
-      background: #ff006e;
-      color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      margin-bottom: 1rem;
+      padding: 0.35rem 1rem;
+      background: rgba(255, 0, 110, 0.12);
+      border: 1px solid rgba(255, 0, 110, 0.25);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: var(--pink);
       font-weight: 600;
+      margin-bottom: 1.5rem;
     }
-    .price {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: #ff006e;
-      margin: 1rem 0;
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      background: var(--gradient-wide);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
     }
-    .price-period {
-      color: #aaa;
-      font-size: 0.95rem;
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-dim);
+      max-width: 560px;
+      margin: 0 auto 2rem;
     }
-    .pricing-features {
-      list-style: none;
-      margin: 1.5rem 0;
-      color: #ccc;
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
     }
-    .pricing-features li {
-      padding: 0.5rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    .pricing-features li:before {
-      content: '✓ ';
-      color: #ff006e;
-      font-weight: bold;
-      margin-right: 0.5rem;
-    }
-    .btn-subscribe {
-      width: 100%;
-      margin-top: 1.5rem;
-      background: linear-gradient(135deg, #ff006e, #8338ec);
-      color: white;
-    }
-    .btn-subscribe:hover {
-      box-shadow: 0 10px 30px rgba(255, 0, 110, 0.3);
-    }
-    /* Features Section */
-    .features {
-      padding: 4rem 2rem;
-      background: rgba(0, 0, 0, 0.2);
-      max-width: 1200px;
+
+    /* ── Section Wrapper ── */
+    .section {
+      padding: 5rem 2rem;
+      max-width: 1100px;
       margin: 0 auto;
     }
-    .features h2 {
+    .section-title {
       text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 3rem;
-      background: linear-gradient(135deg, #ff006e, #8338ec);
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      background: var(--gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+      font-size: 1rem;
+    }
+
+    /* ── Features ── */
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
     }
     .feature-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 2rem;
-      text-align: center;
+      background: var(--dark-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      transition: all 0.3s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 0, 110, 0.3);
     }
     .feature-icon {
-      font-size: 2.5rem;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(255, 0, 110, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
       margin-bottom: 1rem;
     }
     .feature-card h3 {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       margin-bottom: 0.5rem;
     }
     .feature-card p {
-      color: #ccc;
+      color: var(--text-dim);
+      font-size: 0.9rem;
       line-height: 1.5;
     }
-    /* Footer */
-    footer {
-      background: rgba(0, 0, 0, 0.4);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 2rem;
-      text-align: center;
-      color: #aaa;
-      margin-top: 4rem;
+
+    /* ── Pricing ── */
+    .pricing-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 2.5rem;
     }
-    footer a {
-      color: #ff006e;
-      text-decoration: none;
+    .pricing-toggle button {
+      padding: 0.5rem 1.2rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .pricing-toggle button.active {
+      background: var(--gradient);
+      color: white;
+      border-color: transparent;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .pricing-card {
+      background: var(--dark-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    .pricing-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 0, 110, 0.3);
+    }
+    .pricing-card.featured {
+      border: 2px solid var(--pink);
+    }
+    .pricing-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--pink);
+      color: white;
+      padding: 0.2rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .pricing-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.75rem;
+    }
+    .pricing-price {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--pink);
+      margin-bottom: 0.25rem;
+    }
+    .pricing-period {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+    .pricing-save {
+      color: var(--green);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .pricing-features {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+    .pricing-features li {
+      padding: 0.45rem 0;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .pricing-features li::before {
+      content: '';
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255, 0, 110, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ff006e' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    .pricing-card .btn {
+      width: 100%;
+    }
+
+    /* ── Social Proof ── */
+    .social-proof {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: var(--dark-card);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .social-proof p {
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .social-proof strong {
+      color: var(--pink);
+    }
+
+    /* ── CTA Banner ── */
+    .cta-banner {
+      text-align: center;
+      padding: 4rem 2rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .cta-banner h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .cta-banner p {
+      color: var(--text-dim);
+      margin-bottom: 2rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--dark-card);
+      border-top: 1px solid var(--border);
+      padding: 3rem 2rem 2rem;
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 2rem;
+    }
+    .footer-brand .logo-text {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    .footer-brand p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+    .footer-col h4 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+    .footer-col a {
+      display: block;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      padding: 0.25rem 0;
       transition: color 0.3s;
     }
-    footer a:hover {
-      color: #8338ec;
+    .footer-col a:hover { color: var(--pink); }
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 2rem auto 0;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
     }
+
+    /* ── Responsive ── */
     @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 2.5rem;
-      }
-      .hero p {
-        font-size: 1.1rem;
-      }
-      .cta-buttons {
-        flex-direction: column;
-      }
-      .btn {
-        width: 100%;
-      }
-      .logo-text {
-        display: none;
-      }
+      nav { padding: 0.75rem 1rem; }
+      .nav-links { display: none; }
+      .hero { padding: 3rem 1.5rem 2rem; }
+      .hero-buttons { flex-direction: column; align-items: center; }
+      .hero-buttons .btn { width: 100%; max-width: 320px; }
+      .section { padding: 3rem 1.5rem; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .footer-inner { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
+
   <!-- Navigation -->
   <nav>
-    <div class="logo-container">
-      <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/d2be6a60-5126-409a-99af-ba4e5d51cf3f" alt="Oodles & Doodles" class="logo-img">
+    <a href="/" class="logo-container">
+      <div class="logo-icon">O</div>
       <span class="logo-text">oodles&doodles</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="community-guidelines.html">Community</a>
+      <a href="mailto:dannonjabbor@gmail.com">Contact</a>
     </div>
     <div class="nav-buttons">
-      <button class="btn btn-secondary" onclick="window.location.href='auth.html'">Login</button>
-      <button class="btn btn-primary" onclick="window.location.href='auth.html'">Create Account</button>
+      <a href="auth.html" class="btn btn-outline">Log In</a>
+      <a href="auth.html?signup=1" class="btn btn-primary">Sign Up</a>
     </div>
   </nav>
 
-  <!-- Hero Section -->
+  <!-- Hero -->
   <section class="hero">
-    <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/d2be6a60-5126-409a-99af-ba4e5d51cf3f" alt="Oodles & Doodles Logo" class="hero-logo">
+    <div class="hero-badge">18+ &middot; Ad-free &middot; Queer-run</div>
     <h1>Gay Dating Without The Bullshit</h1>
-    <p>Connect with local men in your area. No ads. No fake profiles. Real connections.</p>
-    <div class="cta-buttons">
-      <button class="btn btn-primary" onclick="window.location.href='auth.html'">Start Free Trial</button>
-      <button class="btn btn-secondary" onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'})">See Pricing</button>
+    <p>Real connections for local men. No ads, no fake profiles, no paywalls just to say hello. Built by gay guys who get it.</p>
+    <div class="hero-buttons">
+      <a href="auth.html?signup=1" class="btn btn-primary btn-lg">Start Your Free Trial</a>
+      <a href="#pricing" class="btn btn-outline btn-lg">See Pricing</a>
     </div>
   </section>
 
-  <!-- Features Section -->
-  <section class="features">
-    <h2>Why Choose Oodles & Doodles?</h2>
+  <!-- Features -->
+  <section class="section" id="features">
+    <h2 class="section-title">Why Choose Oodles & Doodles?</h2>
+    <p class="section-subtitle">Everything you need, nothing you don't.</p>
     <div class="features-grid">
       <div class="feature-card">
-        <div class="feature-icon">🚫</div>
-        <h3>No Ads</h3>
-        <p>Browse and chat without intrusive advertisements cluttering your experience.</p>
+        <div class="feature-icon">💰</div>
+        <h3>Actually Affordable</h3>
+        <p>No rising prices or hidden paywalls. Choose weekly, monthly, or grab our one-off lifetime membership.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">✨</div>
-        <h3>Real Profiles</h3>
-        <p>Verified users only. No bots, no fakes, just real gay men looking to connect.</p>
+        <div class="feature-icon">🚫</div>
+        <h3>Zero Ad Spam</h3>
+        <p>We don't bombard you with ads to make money. You pay, we give you quality. Simple as that.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📍</div>
+        <h3>Local Connections</h3>
+        <p>Location-based profiles mean you connect with real guys actually near you, not across the country.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Your Privacy Matters</h3>
+        <p>Messages are ephemeral. Your data isn't sold. What happens on Oodles stays on Oodles.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">💬</div>
         <h3>Instant Messaging</h3>
-        <p>Chat securely with matches. Simple, fast, and private messaging built in.</p>
+        <p>Chat securely with matches. Send text and images. Fast, private messaging built right in.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">📍</div>
-        <h3>Location-Based</h3>
-        <p>Find guys near you. Browse profiles by location and connect locally.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🤝</div>
-        <h3>Community-Driven</h3>
-        <p>Your feedback shapes us. We listen and improve based on what you need.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔒</div>
-        <h3>Secure & Private</h3>
-        <p>Your data is yours. We don't sell your info or share with third parties.</p>
+        <div class="feature-icon">👥</div>
+        <h3>For Men, By Men</h3>
+        <p>18+ men only. Built by gay guys who actually understand what you're looking for.</p>
       </div>
     </div>
   </section>
 
-  <!-- Pricing Section -->
-  <section class="pricing" id="pricing">
-    <h2>Simple, Flexible Pricing</h2>
-    <p style="text-align: center; color: #aaa; margin-bottom: 3rem;">Start free, then choose your plan.</p>
+  <!-- Social Proof -->
+  <div class="social-proof">
+    <p><strong>First 1,000 members</strong> get a 60-day free trial and founding member perks. Join now before spots fill up.</p>
+  </div>
+
+  <!-- Pricing -->
+  <section class="section" id="pricing">
+    <h2 class="section-title">Choose Your Plan</h2>
+    <p class="section-subtitle">Start with a free trial. Upgrade anytime. Cancel anytime.</p>
 
     <div class="pricing-grid">
+      <!-- Free Trial -->
+      <div class="pricing-card">
+        <h3>Free Trial</h3>
+        <div class="pricing-price">Free</div>
+        <div class="pricing-period">7 days, no card required</div>
+        <ul class="pricing-features">
+          <li>Full access to browse</li>
+          <li>Send and receive messages</li>
+          <li>View all profiles</li>
+          <li>See who liked you</li>
+        </ul>
+        <a href="auth.html?signup=1" class="btn btn-primary">Start Free Trial</a>
+      </div>
+
       <!-- Weekly -->
       <div class="pricing-card">
         <h3>Weekly</h3>
-        <div class="price">$6.99<span class="price-period">/week</span></div>
+        <div class="pricing-price">$6.99</div>
+        <div class="pricing-period">per week</div>
         <ul class="pricing-features">
-          <li>Unlimited profiles</li>
-          <li>Unlimited messages</li>
-          <li>See who likes you</li>
-          <li>Mobile app access</li>
+          <li>Unlimited messaging</li>
+          <li>Advanced filters</li>
+          <li>See who liked you</li>
+          <li>Priority support</li>
         </ul>
-        <button class="btn btn-subscribe"
-                onclick="redirectToStripe('https://buy.stripe.com/28EfZh2CuaTMdnacNT1ZS03')">
-          Choose Plan
-        </button>
+        <a href="#" class="btn btn-primary" onclick="handleSubscribe('weekly'); return false;">Subscribe</a>
       </div>
 
-      <!-- Monthly (Featured) -->
+      <!-- Monthly -->
       <div class="pricing-card featured">
-        <span class="pricing-badge">Most Popular</span>
+        <div class="pricing-badge">Most Popular</div>
         <h3>Monthly</h3>
-        <div class="price">$23.99<span class="price-period">/month</span></div>
-        <p style="color: #51cf66; font-size: 0.9rem; margin-bottom: 1rem;">Save vs weekly</p>
+        <div class="pricing-price">$23.99</div>
+        <div class="pricing-period">per month</div>
+        <div class="pricing-save">Save 14% vs weekly</div>
         <ul class="pricing-features">
-          <li>Unlimited profiles</li>
-          <li>Unlimited messages</li>
-          <li>See who likes you</li>
-          <li>Mobile app access</li>
+          <li>Unlimited everything</li>
+          <li>Advanced filters</li>
+          <li>See who liked you</li>
           <li>Priority support</li>
+          <li>Profile boost</li>
         </ul>
-        <button class="btn btn-subscribe"
-                onclick="redirectToStripe('https://buy.stripe.com/eVq8wP0um0f80Ao4hn1ZS02')">
-          Choose Plan
-        </button>
+        <a href="#" class="btn btn-primary" onclick="handleSubscribe('monthly'); return false;">Subscribe</a>
       </div>
 
-      <!-- Yearly -->
+      <!-- Lifetime -->
       <div class="pricing-card">
-        <h3>Yearly</h3>
-        <div class="price">$88.82<span class="price-period">/year</span></div>
-        <p style="color: #51cf66; font-size: 0.9rem; margin-bottom: 1rem;">Best value</p>
+        <h3>Lifetime</h3>
+        <div class="pricing-price">$72.66</div>
+        <div class="pricing-period">one-time payment</div>
+        <div class="pricing-save">Limited to first 1,000 users</div>
         <ul class="pricing-features">
-          <li>Unlimited profiles</li>
-          <li>Unlimited messages</li>
-          <li>See who likes you</li>
-          <li>Mobile app access</li>
-          <li>Priority support</li>
-          <li>Profile boost monthly</li>
+          <li>Forever access</li>
+          <li>No recurring charges</li>
+          <li>All future features</li>
+          <li>Lifetime VIP support</li>
         </ul>
-        <button class="btn btn-subscribe"
-                onclick="redirectToStripe('https://buy.stripe.com/9B66oH1yq3rk5UIg051ZS01')">
-          Choose Plan
-        </button>
+        <a href="#" class="btn btn-primary" onclick="handleSubscribe('lifetime'); return false;">Buy Lifetime</a>
       </div>
     </div>
+  </section>
 
-    <div style="text-align: center; margin-top: 3rem; padding: 2rem; background: rgba(255, 0, 110, 0.1); border-radius: 12px; border: 1px solid rgba(255, 0, 110, 0.2);">
-      <p>💰 <strong>Limited Offer:</strong> New members get free access during the trial period on any plan.</p>
-    </div>
+  <!-- CTA -->
+  <section class="cta-banner">
+    <h2>Ready to Find Your People?</h2>
+    <p>Join a growing community of real men looking for real connections. No bullshit, just dating done right.</p>
+    <a href="auth.html?signup=1" class="btn btn-primary btn-lg">Create Your Free Account</a>
   </section>
 
   <!-- Footer -->
   <footer>
-    <p>© <span id="year"></span> Oodles & Doodles. All rights reserved. | 18+ only |
-      <a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="mailto:dannonjabbor@gmail.com">Contact</a>
-    </p>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo-text" style="display:block; -webkit-text-fill-color: unset; background: none; color: var(--text);">
+          <span style="background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">oodles&doodles</span>
+        </div>
+        <p>Gay dating without the bullshit. Ad-free, queer-run, respectful connections for men 18+.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="auth.html?signup=1">Sign Up</a>
+        <a href="auth.html">Log In</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="cookies.html">Cookie Policy</a>
+        <a href="refund-policy.html">Refund Policy</a>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <a href="community-guidelines.html">Community Guidelines</a>
+        <a href="mailto:dannonjabbor@gmail.com">Contact Us</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span id="year"></span> Oodles & Doodles Pty Ltd. All rights reserved. 18+ only.</span>
+      <span>Made with care in Australia</span>
+    </div>
   </footer>
 
-  <!-- Firebase + Analytics + Stripe redirect -->
+  <!-- Firebase + Stripe -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-    import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBVqDVruufVu5AvXBitSoukogADaopR-7A",
@@ -438,33 +630,40 @@
       projectId: "oodlesanddoodles-c9202",
       storageBucket: "oodlesanddoodles-c9202.firebasestorage.app",
       messagingSenderId: "351292337624",
-      appId: "1:351292337624:web:5ab5d5bf37b800d0da96ad",
-      measurementId: "G-495EWC1D7H"
+      appId: "1:351292337624:web:5ab5d5bf37b800d0da96ad"
     };
 
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const auth = getAuth(app);
 
-    // Track page view
-    logEvent(analytics, 'page_view', {
-      page_title: document.title,
-      page_location: window.location.href
+    // Stripe Payment Links (replace with your real Stripe links)
+    const STRIPE_LINKS = {
+      weekly:   "https://buy.stripe.com/28EfZh2CuaTMdnacNT1ZS03",
+      monthly:  "https://buy.stripe.com/eVq8wP0um0f80Ao4hn1ZS02",
+      lifetime: "https://buy.stripe.com/9B66oH1yq3rk5UIg051ZS01"
+    };
+
+    // If user is already logged in, redirect to dashboard
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in - update nav buttons
+        const navBtns = document.querySelector('.nav-buttons');
+        navBtns.innerHTML = `<a href="dashboard.html" class="btn btn-primary">Go to Dashboard</a>`;
+      }
     });
 
-    // Stripe redirect utility
-    window.redirectToStripe = (checkoutUrl) => {
+    window.handleSubscribe = (plan) => {
       const user = auth.currentUser;
       if (!user) {
-        alert('Please create an account first');
-        window.location.href = 'auth.html';
+        // Not logged in - send to auth with redirect
+        window.location.href = `auth.html?signup=1&plan=${plan}`;
         return;
       }
-      const tier = checkoutUrl.includes('28EfZh2CuaTMdnacNT1ZS03') ? 'weekly'
-        : checkoutUrl.includes('eVq8wP0um0f80Ao4hn1ZS02') ? 'monthly'
-        : 'yearly';
-      logEvent(analytics, 'upgrade_click', { tier });
-      window.location.href = checkoutUrl;
+      // Logged in - redirect to Stripe
+      const url = STRIPE_LINKS[plan];
+      if (url) {
+        window.location.href = url;
+      }
     };
 
     document.getElementById('year').textContent = new Date().getFullYear();

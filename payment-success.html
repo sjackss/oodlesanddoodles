@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Successful - Oodles & Doodles</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --pink: #ff006e;
+      --purple: #8338ec;
+      --dark: #050818;
+      --dark-card: #0b1024;
+      --border: #272b4a;
+      --text: #f5f5f5;
+      --text-muted: #9aa3ff;
+      --text-dim: #b0b8d0;
+      --green: #51cf66;
+      --gradient: linear-gradient(135deg, var(--pink), var(--purple));
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      background: var(--dark-card);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-logo {
+      font-weight: 700;
+      font-size: 1rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+    }
+    .success-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .success-card {
+      max-width: 480px;
+      width: 100%;
+      background: var(--dark-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+    }
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(81, 207, 102, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1.25rem;
+    }
+    .success-card h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .success-card p {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+    .btn-dashboard {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      border-radius: 12px;
+      background: var(--gradient);
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .btn-dashboard:hover {
+      box-shadow: 0 6px 20px rgba(255, 0, 110, 0.3);
+      transform: translateY(-1px);
+    }
+    .note {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="/" class="topbar-logo">oodles&doodles</a>
+  </header>
+
+  <div class="success-wrapper">
+    <div class="success-card">
+      <div class="success-icon">✅</div>
+      <h1>Payment Successful!</h1>
+      <p>Your subscription is now active. You have full access to all features including unlimited messaging, advanced filters, and priority support.</p>
+      <a href="/dashboard.html" class="btn-dashboard">Go to Dashboard</a>
+      <p class="note">Your subscription details will appear in Settings. You can manage billing through Stripe's customer portal.</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBVqDVruufVu5AvXBitSoukogADaopR-7A",
+      authDomain: "oodlesanddoodles-c9202.firebaseapp.com",
+      projectId: "oodlesanddoodles-c9202",
+      storageBucket: "oodlesanddoodles-c9202.firebasestorage.app",
+      messagingSenderId: "351292337624",
+      appId: "1:351292337624:web:5ab5d5bf37b800d0da96ad"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Mark user as paid when they land on this page
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          await setDoc(doc(db, 'users', user.uid), {
+            isPaid: true,
+            subscriptionTier: 'Paid',
+            paidAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          }, { merge: true });
+        } catch (err) {
+          console.error('Error updating payment status:', err);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
